@@ -67,16 +67,27 @@ def mini_batch_gradient_descent(
             indices = rng.choice(sample_size, batch_size, False)
             loss, gradient = trimmed_squared_loss_and_gradient(
                 X[indices], w, y[indices], epsilon)
-        if abs(loss - prev_loss) / prev_loss < 1e-3:
+        if abs(loss - prev_loss) / prev_loss < 1e-5:
             return w
         prev_loss = loss
     return w
 
 
+def power_expand(_X: np.ndarray, power: int) -> np.ndarray:
+    # | x0 |    | x0 x0^2 ... |
+    # | x1 | => | x1 x1^2 ... |
+    # | .. |    | .. .... ... |
+    X = np.empty((_X.shape[0], power))
+    X[:, 0] = _X
+    for i in range(1, power):
+        X[:, i] = _X ** (i + 1)
+    return X
+
 def generate_X_and_y_with_w(w: np.ndarray, x_low: float, x_high: float, size: int, noise_level: float) -> Tuple[np.ndarray, np.ndarray]:
     # return X and y, respectively
     rng = np.random.default_rng()
-    X = rng.uniform(x_low, x_high, (size, w.shape[0] - 1))
+    dimension = w.shape[0] - 1
+    X = power_expand(rng.uniform(x_low, x_high, size), dimension)
     y = np.c_[np.ones(size), X].dot(w)
     y += rng.normal(0, stdev(y) * noise_level, size)
     return X, y
@@ -174,20 +185,24 @@ def test_model(
     plt.savefig(join("test_result_img", f"{title} Testing without trimming"))
 
 
-def test_no_noise_no_contamination():
+def test_no_noise_no_contamination(
+    power: int,
+    epsilon: float,
+    batch_size: int,
+    learning_rate: float,
+    max_iter: int
+):
     w_low = -10
     w_high = 10
-    x_low = -10
-    x_high = 10
-    noise_level = 0
+    x_low = -1
+    x_high = 1
     training_size = 1000
     testing_size = 1000
-    epsilon = 0
 
     rng = np.random.default_rng()
-    w = rng.uniform(w_low, w_high, 2)
+    w = rng.uniform(w_low, w_high, power + 1)
     X_training, y_training = generate_X_and_y_with_w(
-        w, x_low, x_high, training_size, noise_level)
+        w, x_low, x_high, training_size, 0)
     X_testing, y_testing = generate_X_and_y_with_w(
         w, x_low, x_high, testing_size, 0)
     test_model(
@@ -197,25 +212,30 @@ def test_no_noise_no_contamination():
         X_testing,
         y_testing,
         epsilon,
-        100,
-        0.01,
-        1000,
+        batch_size,
+        learning_rate,
+        max_iter,
         "No Noise No Contamination"
     )
 
 
-def test_no_contamination():
+def test_no_contamination(
+    power: int,
+    noise_level: float,
+    epsilon: float,
+    batch_size: int,
+    learning_rate: float,
+    max_iter: int
+):
     w_low = -10
     w_high = 10
-    x_low = -10
-    x_high = 10
-    noise_level = 0.5
+    x_low = -1
+    x_high = 1
     training_size = 1000
     testing_size = 1000
-    epsilon = 0
 
     rng = np.random.default_rng()
-    w = rng.uniform(w_low, w_high, 2)
+    w = rng.uniform(w_low, w_high, power + 1)
     X_training, y_training = generate_X_and_y_with_w(
         w, x_low, x_high, training_size, noise_level)
     X_testing, y_testing = generate_X_and_y_with_w(
@@ -227,37 +247,38 @@ def test_no_contamination():
         X_testing,
         y_testing,
         epsilon,
-        100,
-        0.01,
-        1000,
+        batch_size,
+        learning_rate,
+        max_iter,
         "No Contamination"
     )
 
 
-def test_random_contamination():
+def test_random_contamination(
+    power: int,
+    noise_level: float,
+    epsilon: float,
+    batch_size: int,
+    learning_rate: float,
+    max_iter: int
+):
     w_low = -10
     w_high = 10
-    x_low = -10
-    x_high = 10
-    noise_level = 0.5
+    x_low = -1
+    x_high = 1
     training_size = 1000
     testing_size = 1000
-    epsilon = 0.5
 
     rng = np.random.default_rng()
-    w = rng.uniform(w_low, w_high, 2)
-    X_training, y_training = generate_X_and_y_with_w(
-        w, x_low, x_high, training_size, noise_level)
+    w = rng.uniform(w_low, w_high, power + 1)
+    X_training, y_training = generate_X_and_y_with_w(w, x_low, x_high, training_size, noise_level)
     contamination_size = int(training_size * epsilon)
     contaminated_indices = rng.choice(training_size, contamination_size, False)
-    X_contamination = rng.uniform(
-        X_training.min(), X_training.max(), (contamination_size, 1))
-    Y_contamination = rng.uniform(
-        y_training.min(), y_training.max(), contamination_size)
+    X_contamination = power_expand(rng.uniform(X_training[:, 0].min(), X_training[:, 0].max(), contamination_size), power)
+    Y_contamination = rng.uniform(y_training.min(), y_training.max(), contamination_size)
     X_training[contaminated_indices] = X_contamination
     y_training[contaminated_indices] = Y_contamination
-    X_testing, y_testing = generate_X_and_y_with_w(
-        w, x_low, x_high, testing_size, 0)
+    X_testing, y_testing = generate_X_and_y_with_w(w, x_low, x_high, testing_size, 0)
     test_model(
         X_training,
         y_training,
@@ -265,14 +286,34 @@ def test_random_contamination():
         X_testing,
         y_testing,
         epsilon,
-        100,
-        0.01,
-        1000,
+        batch_size,
+        learning_rate,
+        max_iter,
         "Random Contamination"
     )
 
 
 if __name__ == "__main__":
-    test_no_noise_no_contamination()
-    test_no_contamination()
-    test_random_contamination()
+    test_no_noise_no_contamination(
+        3, # power
+        0.1, # epsilon
+        100, # batch size
+        0.01, # learning rate
+        10000 # max iter
+    )
+    test_no_contamination(
+        3, # power
+        1, # noise level
+        0.1, # epsilon
+        100, # batch size
+        0.01, # learning rate
+        10000 # max iter
+    )
+    test_random_contamination(
+        3, # power
+        1, # noise level
+        0.5, # epsilon
+        100, # batch size
+        0.01, # learning rate
+        10000 # max iter
+    )
