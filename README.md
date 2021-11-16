@@ -12,7 +12,7 @@ We will test with random adversaries, adversaries attempting to affect the slope
 
 ## Algorithm
 
-    Method fit(X, y, ε, batch_size, η, max_iter) -> w:
+    Procedure fit(X, y, ε, batch_size, η, max_iter) -> w:
         Initialize w
         While not converged and not exceeding max_iter iterations:
             For each batch:
@@ -33,8 +33,8 @@ python3 main.py
 
 ## Test Results
 
-| Condition | Training Set | Testing Set |
-| - | - | - |
-| No noise, no contamination | ![](00%20No%20Noise%20No%20Contamination%20Training.png) | ![](00%20No%20Noise%20No%20Contamination%20Testing.png) |
-| No contamination | ![](01%20No%20Contamination%20Training.png) | ![](01%20No%20Contamination%20Testing.png) |
-| Random contamination | ![](02%20Random%20Contamination%20Training.png) | ![](02%20Random%20Contamination%20Testing.png) |
+| Condition | Training Set (with trimming) | Testing Set (with trimming) | Training Set (without trimming) | Testing Set (without trimming) |
+| - | - | - | - | - |
+| No noise, no contamination | ![](test_result_img/No%20Noise%20No%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Testing%20without%20trimming.png) |
+| No contamination | ![](test_result_img/No%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/No%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/No%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/No%20Contamination%20Testing%20without%20trimming.png) |
+| Random contamination | ![](test_result_img/Random%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/Random%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/Random%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/Random%20Contamination%20Testing%20without%20trimming.png) |
