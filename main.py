@@ -160,7 +160,50 @@ def test_random_contamination(training_size: int = 100, testing_size: int = 900,
     plt.savefig("random_contamination")
 
 
+def test_edge_contamination(training_size: int = 100, testing_size: int = 900, noise_level: float = 0.1, epsilon: float = 0.1):
+    rng = np.random.default_rng()
+    w = generate_random_weights()
+    
+    X_training, y_training = generate_X_and_y(w, training_size, noise_level) 
+    X_contamination = np.max(X_training) - rng.random((int(training_size * epsilon/ 2), 1)) /10
+    Y_contamination = rng.random(int(training_size * epsilon/ 2))/10  * w.shape[0]
+    indices = rng.choice(training_size, int(training_size * epsilon /2), False)
+    X_training[indices] = X_contamination
+    y_training[indices] = Y_contamination
+
+    X_contamination = rng.random((int(training_size * epsilon/ 2), 1)) /10
+    Y_contamination = np.max(y_training) - rng.random(int(training_size * epsilon/ 2)) /10 *  w.shape[0]
+    indices = rng.choice(training_size, int(training_size * epsilon /2), False)
+    X_training[indices] = X_contamination
+    y_training[indices] = Y_contamination
+    X_testing, y_testing = generate_X_and_y(w, 1000, 0)
+    w_bar = mini_batch_gradient_descent(X_training, y_training, batch_size=100, epsilon=epsilon)
+    y_bar = predict(X_testing, w_bar)
+    mse = mean_squared_error(y_bar, y_testing)
+    print(f"True weight vector: {w}")
+    print(f"Estimated weight vector: {w_bar}")
+    plt.figure()
+    plt.scatter(X_training[:, 0], y_training, s=2)
+    plt.suptitle("noise_level=0, epsilon=0")
+    plt.title("Training Set")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.ylim(0, w.shape[0])
+    plt.savefig("edge_contamination_training")
+    plt.figure()
+    plt.scatter(X_testing[:, 0], y_testing, s=2, c="blue", label="Ground Truth")
+    plt.scatter(X_testing[:, 0], y_bar, s=2, c="red", label="Estimation")
+    plt.suptitle("noise_level=0, epsilon=0")
+    plt.title(f"Testing Set, MSE={mse}")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.ylim(0, w.shape[0])
+    plt.legend()
+    plt.savefig("edge_contamination")
+
+
 if __name__ == "__main__":
     test_no_noise_no_contamination(1000, 9000)
     test_no_contamination(1000, 9000, 1)
     test_random_contamination(1000, 9000, 1, 0.8)
+    test_edge_contamination(1000, 9000, 1, 0.8)
