@@ -15,11 +15,10 @@ We will test with random adversaries, adversaries attempting to affect the slope
     Procedure fit(X, y, ε, batch_size, η, max_iter) -> w:
         Initialize w
         While not converged and not exceeding max_iter iterations:
-            For each batch:
-                Calculate the squared losses of all samples
-                Trim the ε ⋅ batch_size samples with the largest losses
-                Calculate the gradient of w, ignoring the effects of the trimmed samples
-                Update w
+            Randomly select batch_size samples without replacement
+            Calculate the squared losses of all the samples in the batch
+            Calculate the gradient of w, ignoring the effects of the ε ⋅ batch_size samples with the largest losses
+            Update w := w - η ⋅ gradient
         Return w
 
 ## Run
