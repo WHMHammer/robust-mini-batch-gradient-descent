@@ -12,9 +12,9 @@ We will test with random adversaries, adversaries attempting to affect the slope
 
 ## Algorithm
 
-    Method fit(X, y, N, ε, η) -> w:
+    Method fit(X, y, ε, batch_size, η, max_iter) -> w:
         Initialize w
-        While not converged and not exceeding N iterations:
+        While not converged and not exceeding max_iter iterations:
             For each batch:
                 Calculate the squared losses of all samples
                 Trim the ε ⋅ batch_size samples with the largest losses
