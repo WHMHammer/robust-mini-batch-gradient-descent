@@ -17,7 +17,7 @@ We will test with random adversaries, adversaries attempting to affect the slope
         While not converged and not exceeding max_iter iterations:
             Randomly select batch_size samples without replacement
             Calculate the squared losses of all the samples in the batch
-            Calculate the gradient of w, ignoring the effects of the ε ⋅ batch_size samples with the largest losses
+            Calculate the gradient of the losses with respect to w, ignoring the effects of the ε ⋅ batch_size samples with the largest losses
             Update w := w - η ⋅ gradient
         Return w
 
