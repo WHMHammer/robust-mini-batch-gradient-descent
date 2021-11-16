@@ -6,8 +6,11 @@ from statistics import stdev
 from typing import Tuple
 
 DEBUG = False
-losses_log_filename = "losses.csv"
-batch_index = 0
+if DEBUG:
+    losses_log_filename = "losses.csv"
+    with open(losses_log_filename, "w") as f:
+        pass
+    batch_index = 0
 
 
 def trimmed_squared_loss_and_gradient(
@@ -46,7 +49,7 @@ def mini_batch_gradient_descent(
     sample_size, dimension = X.shape
     rng = np.random.default_rng()
     X = np.c_[np.ones(sample_size), X]
-    w = np.full(dimension + 1, 0.5)
+    w = np.ones(dimension + 1)
     if batch_size == 0:
         prev_loss, gradient = trimmed_squared_loss_and_gradient(
             X, w, y, epsilon)
@@ -63,7 +66,7 @@ def mini_batch_gradient_descent(
             indices = rng.choice(sample_size, batch_size, False)
             loss, gradient = trimmed_squared_loss_and_gradient(
                 X[indices], w, y[indices], epsilon)
-        if abs(loss - prev_loss) / prev_loss < 0.001:
+        if abs(loss - prev_loss) / prev_loss < 1e-3:
             return w
         prev_loss = loss
     return w
@@ -165,7 +168,7 @@ def test_no_contamination():
     w_high = 10
     x_low = -10
     x_high = 10
-    noise_level = 1
+    noise_level = 0.5
     training_size = 1000
     testing_size = 1000
     epsilon = 0
@@ -195,10 +198,10 @@ def test_random_contamination():
     w_high = 10
     x_low = -10
     x_high = 10
-    noise_level = 1
+    noise_level = 0.5
     training_size = 1000
     testing_size = 1000
-    epsilon = 0.2
+    epsilon = 0.5
 
     rng = np.random.default_rng()
     w = rng.uniform(w_low, w_high, 2)
