@@ -12,11 +12,11 @@ We will test with random adversaries, adversaries attempting to affect the slope
 
 ## Algorithm
 
-    Procedure fit(X, y, ε, batch_size, η, max_iter) -> w:
+    Procedure fit(X, y, ε, batch_size, η, max_iter, α) -> w:
         Initialize w
         While not converged and not exceeding max_iter iterations:
             Randomly select batch_size samples without replacement
-            Calculate the squared losses of all the samples in the batch
+            Calculate the squared losses of all the samples in the batch, with α-weighted L2 regularization
             Calculate the gradient of the losses with respect to w, ignoring the effects of the ε ⋅ batch_size samples with the largest losses
             Update w := w - η ⋅ gradient
         Return w
