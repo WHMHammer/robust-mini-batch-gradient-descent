@@ -330,11 +330,13 @@ def test_edge_contamination(
     Y_contamination = rng.uniform(y_training.min(), y_training.min() + (y_training.max() - y_training.min())/10, contamination_size)
     X_training[contaminated_indices] = X_contamination
     y_training[contaminated_indices] = Y_contamination
-    contaminated_indices = rng.choice(training_size, contamination_size, False)
-    X_contamination = power_expand(rng.uniform(X_training[:, 0].min(), X_training[:, 0].min() + (X_training[:, 0].max() - X_training[:, 0].min())/10, contamination_size), power)
-    Y_contamination = rng.uniform(y_training.max() - (y_training.max() - y_training.min())/10, y_training.max(), contamination_size)
-    X_training[contaminated_indices] = X_contamination
-    y_training[contaminated_indices] = Y_contamination
+    contaminated_indices2 = rng.choice(training_size, contamination_size, False)
+    X_contamination2 = power_expand(rng.uniform(X_training[:, 0].min(), X_training[:, 0].min() + (X_training[:, 0].max() - X_training[:, 0].min())/10, contamination_size), power)
+    Y_contamination2 = rng.uniform(y_training.max() - (y_training.max() - y_training.min())/10, y_training.max(), contamination_size)
+    X_training[contaminated_indices2] = X_contamination2
+    y_training[contaminated_indices2] = Y_contamination2
+    
+    contaminated_indices = np.concatenate([contaminated_indices, contaminated_indices2])
     X_testing, y_testing = generate_X_and_y_with_w(w, x_low, x_high, testing_size, 0)
     test_model(
         X_training,
