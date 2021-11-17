@@ -2,6 +2,7 @@ import numpy as np
 from csv import writer
 from math import ceil
 from matplotlib import pyplot as plt
+from os.path import join
 from statistics import stdev
 from typing import Tuple
 
@@ -66,16 +67,27 @@ def mini_batch_gradient_descent(
             indices = rng.choice(sample_size, batch_size, False)
             loss, gradient = trimmed_squared_loss_and_gradient(
                 X[indices], w, y[indices], epsilon)
-        if abs(loss - prev_loss) / prev_loss < 1e-3:
+        if abs(loss - prev_loss) / prev_loss < 1e-5:
             return w
         prev_loss = loss
     return w
 
 
+def power_expand(_X: np.ndarray, power: int) -> np.ndarray:
+    # | x0 |    | x0 x0^2 ... |
+    # | x1 | => | x1 x1^2 ... |
+    # | .. |    | .. .... ... |
+    X = np.empty((_X.shape[0], power))
+    X[:, 0] = _X
+    for i in range(1, power):
+        X[:, i] = _X ** (i + 1)
+    return X
+
 def generate_X_and_y_with_w(w: np.ndarray, x_low: float, x_high: float, size: int, noise_level: float) -> Tuple[np.ndarray, np.ndarray]:
     # return X and y, respectively
     rng = np.random.default_rng()
-    X = rng.uniform(x_low, x_high, (size, w.shape[0] - 1))
+    dimension = w.shape[0] - 1
+    X = power_expand(rng.uniform(x_low, x_high, size), dimension)
     y = np.c_[np.ones(size), X].dot(w)
     y += rng.normal(0, stdev(y) * noise_level, size)
     return X, y
@@ -107,7 +119,7 @@ def test_model(
                          ) / y_bar_testing.shape[0]
 
     plt.figure()
-    plt.suptitle(title)
+    plt.suptitle(f"{title} with trimming")
     plt.title("Training Set")
     if contaminated_indices is None:
         plt.scatter(X_training[:, 0], y_training,
@@ -120,31 +132,110 @@ def test_model(
     plt.scatter(X_training[:, 0], y_bar_training,
                 s=5, c="red", label="Estimations")
     plt.legend()
-    plt.savefig(f"{title} Training")
+    plt.savefig(join("test_result_img", f"{title} Training with trimming"))
 
     plt.figure()
-    plt.suptitle(title)
+    plt.suptitle(f"{title} with trimming")
     plt.title(f"Testing Set, MSE={testing_mse}")
     plt.scatter(X_testing[:, 0], y_testing, s=5,
                 c="blue", label="Ground Truth")
     plt.scatter(X_testing[:, 0], y_bar_testing,
                 s=5, c="red", label="Estimations")
     plt.legend()
-    plt.savefig(f"{title} Testing")
+    plt.savefig(join("test_result_img", f"{title} Testing with trimming"))
+
+    
+    w_bar = mini_batch_gradient_descent(
+        X_training,
+        y_training,
+        0,
+        batch_size,
+        learning_rate,
+        max_iter
+    )
+    y_bar_training = np.c_[np.ones(X_training.shape[0]), X_training].dot(w_bar)
+    y_bar_testing = np.c_[np.ones(X_testing.shape[0]), X_testing].dot(w_bar)
+    testing_mse = np.sum(np.square(y_bar_testing - y_testing)
+                         ) / y_bar_testing.shape[0]
+
+    plt.figure()
+    plt.suptitle(f"{title} without trimming")
+    plt.title("Training Set")
+    if contaminated_indices is None:
+        plt.scatter(X_training[:, 0], y_training,
+                    s=5, c="blue", label="Raw Data")
+    else:
+        plt.scatter(np.delete(X_training[:, 0], contaminated_indices), np.delete(
+            y_training, contaminated_indices), s=5, c="blue", label="Authentic Data")
+        plt.scatter(X_training[contaminated_indices, 0],
+                    y_training[contaminated_indices], s=5, c="gray", label="Contamination")
+    plt.scatter(X_training[:, 0], y_bar_training,
+                s=5, c="red", label="Estimations")
+    plt.legend()
+    plt.savefig(join("test_result_img", f"{title} Training without trimming"))
+
+    plt.figure()
+    plt.suptitle(f"{title} without trimming")
+    plt.title(f"Testing Set, MSE={testing_mse}")
+    plt.scatter(X_testing[:, 0], y_testing, s=5,
+                c="blue", label="Ground Truth")
+    plt.scatter(X_testing[:, 0], y_bar_testing,
+                s=5, c="red", label="Estimations")
+    plt.legend()
+    plt.savefig(join("test_result_img", f"{title} Testing without trimming"))
 
 
-def test_no_noise_no_contamination():
+def test_no_noise_no_contamination(
+    power: int,
+    epsilon: float,
+    batch_size: int,
+    learning_rate: float,
+    max_iter: int
+):
     w_low = -10
     w_high = 10
-    x_low = -10
-    x_high = 10
-    noise_level = 0
+    x_low = -1
+    x_high = 1
     training_size = 1000
     testing_size = 1000
-    epsilon = 0
 
     rng = np.random.default_rng()
-    w = rng.uniform(w_low, w_high, 2)
+    w = rng.uniform(w_low, w_high, power + 1)
+    X_training, y_training = generate_X_and_y_with_w(
+        w, x_low, x_high, training_size, 0)
+    X_testing, y_testing = generate_X_and_y_with_w(
+        w, x_low, x_high, testing_size, 0)
+    test_model(
+        X_training,
+        y_training,
+        None,
+        X_testing,
+        y_testing,
+        epsilon,
+        batch_size,
+        learning_rate,
+        max_iter,
+        "No Noise No Contamination"
+    )
+
+
+def test_no_contamination(
+    power: int,
+    noise_level: float,
+    epsilon: float,
+    batch_size: int,
+    learning_rate: float,
+    max_iter: int
+):
+    w_low = -10
+    w_high = 10
+    x_low = -1
+    x_high = 1
+    training_size = 1000
+    testing_size = 1000
+
+    rng = np.random.default_rng()
+    w = rng.uniform(w_low, w_high, power + 1)
     X_training, y_training = generate_X_and_y_with_w(
         w, x_low, x_high, training_size, noise_level)
     X_testing, y_testing = generate_X_and_y_with_w(
@@ -156,67 +247,38 @@ def test_no_noise_no_contamination():
         X_testing,
         y_testing,
         epsilon,
-        100,
-        0.01,
-        1000,
-        "00 No Noise No Contamination"
+        batch_size,
+        learning_rate,
+        max_iter,
+        "No Contamination"
     )
 
 
-def test_no_contamination():
+def test_random_contamination(
+    power: int,
+    noise_level: float,
+    epsilon: float,
+    batch_size: int,
+    learning_rate: float,
+    max_iter: int
+):
     w_low = -10
     w_high = 10
-    x_low = -10
-    x_high = 10
-    noise_level = 0.5
+    x_low = -1
+    x_high = 1
     training_size = 1000
     testing_size = 1000
-    epsilon = 0
 
     rng = np.random.default_rng()
-    w = rng.uniform(w_low, w_high, 2)
-    X_training, y_training = generate_X_and_y_with_w(
-        w, x_low, x_high, training_size, noise_level)
-    X_testing, y_testing = generate_X_and_y_with_w(
-        w, x_low, x_high, testing_size, 0)
-    test_model(
-        X_training,
-        y_training,
-        None,
-        X_testing,
-        y_testing,
-        epsilon,
-        100,
-        0.01,
-        1000,
-        "01 No Contamination"
-    )
-
-
-def test_random_contamination():
-    w_low = -10
-    w_high = 10
-    x_low = -10
-    x_high = 10
-    noise_level = 0.5
-    training_size = 1000
-    testing_size = 1000
-    epsilon = 0.5
-
-    rng = np.random.default_rng()
-    w = rng.uniform(w_low, w_high, 2)
-    X_training, y_training = generate_X_and_y_with_w(
-        w, x_low, x_high, training_size, noise_level)
+    w = rng.uniform(w_low, w_high, power + 1)
+    X_training, y_training = generate_X_and_y_with_w(w, x_low, x_high, training_size, noise_level)
     contamination_size = int(training_size * epsilon)
     contaminated_indices = rng.choice(training_size, contamination_size, False)
-    X_contamination = rng.uniform(
-        X_training.min(), X_training.max(), (contamination_size, 1))
-    Y_contamination = rng.uniform(
-        y_training.min(), y_training.max(), contamination_size)
+    X_contamination = power_expand(rng.uniform(X_training[:, 0].min(), X_training[:, 0].max(), contamination_size), power)
+    Y_contamination = rng.uniform(y_training.min(), y_training.max(), contamination_size)
     X_training[contaminated_indices] = X_contamination
     y_training[contaminated_indices] = Y_contamination
-    X_testing, y_testing = generate_X_and_y_with_w(
-        w, x_low, x_high, testing_size, 0)
+    X_testing, y_testing = generate_X_and_y_with_w(w, x_low, x_high, testing_size, 0)
     test_model(
         X_training,
         y_training,
@@ -224,57 +286,85 @@ def test_random_contamination():
         X_testing,
         y_testing,
         epsilon,
-        100,
-        0.01,
-        1000,
-        "02 Random Contamination"
+        batch_size,
+        learning_rate,
+        max_iter,
+        "Random Contamination"
     )
 
 
-def test_edge_contamination(training_size: int = 100, testing_size: int = 900, noise_level: float = 0.1, epsilon: float = 0.1):
+def test_edge_contamination(
+    power: int,
+    noise_level: float,
+    epsilon: float,
+    batch_size: int,
+    learning_rate: float,
+    max_iter: int
+):
+    w_low = -10
+    w_high = 10
+    x_low = -1
+    x_high = 1
+    training_size = 1000
+    testing_size = 1000
+
     rng = np.random.default_rng()
-    w = generate_random_weights()
-    
-    X_training, y_training = generate_X_and_y(w, training_size, noise_level) 
-    X_contamination = np.max(X_training) - rng.random((int(training_size * epsilon/ 2), 1)) /10
-    Y_contamination = rng.random(int(training_size * epsilon/ 2))/10  * w.shape[0]
-    indices = rng.choice(training_size, int(training_size * epsilon /2), False)
-    X_training[indices] = X_contamination
-    y_training[indices] = Y_contamination
-
-    X_contamination = rng.random((int(training_size * epsilon/ 2), 1)) /10
-    Y_contamination = np.max(y_training) - rng.random(int(training_size * epsilon/ 2)) /10 *  w.shape[0]
-    indices = rng.choice(training_size, int(training_size * epsilon /2), False)
-    X_training[indices] = X_contamination
-    y_training[indices] = Y_contamination
-    X_testing, y_testing = generate_X_and_y(w, 1000, 0)
-    w_bar = mini_batch_gradient_descent(X_training, y_training, batch_size=100, epsilon=epsilon)
-    y_bar = predict(X_testing, w_bar)
-    mse = mean_squared_error(y_bar, y_testing)
-    print(f"True weight vector: {w}")
-    print(f"Estimated weight vector: {w_bar}")
-    plt.figure()
-    plt.scatter(X_training[:, 0], y_training, s=2)
-    plt.suptitle("noise_level=0, epsilon=0")
-    plt.title("Training Set")
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.ylim(0, w.shape[0])
-    plt.savefig("edge_contamination_training")
-    plt.figure()
-    plt.scatter(X_testing[:, 0], y_testing, s=2, c="blue", label="Ground Truth")
-    plt.scatter(X_testing[:, 0], y_bar, s=2, c="red", label="Estimation")
-    plt.suptitle("noise_level=0, epsilon=0")
-    plt.title(f"Testing Set, MSE={mse}")
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.ylim(0, w.shape[0])
-    plt.legend()
-    plt.savefig("edge_contamination")
-
+    w = rng.uniform(w_low, w_high, power + 1)
+    X_training, y_training = generate_X_and_y_with_w(w, x_low, x_high, training_size, noise_level)
+    contamination_size = int(training_size * epsilon / 2)
+    contaminated_indices = rng.choice(training_size, contamination_size, False)
+    X_contamination = power_expand(rng.uniform(X_training[:, 0].max() - (X_training[:, 0].max() - X_training[:, 0].min())/10, X_training[:, 0].max(), contamination_size), power)
+    Y_contamination = rng.uniform(y_training.min(), y_training.min() + (y_training.max() - y_training.min())/10, contamination_size)
+    X_training[contaminated_indices] = X_contamination
+    y_training[contaminated_indices] = Y_contamination
+    contaminated_indices = rng.choice(training_size, contamination_size, False)
+    X_contamination = power_expand(rng.uniform(X_training[:, 0].min(), X_training[:, 0].min() + (X_training[:, 0].max() - X_training[:, 0].min())/10, contamination_size), power)
+    Y_contamination = rng.uniform(y_training.max() - (y_training.max() - y_training.min())/10, y_training.max(), contamination_size)
+    X_training[contaminated_indices] = X_contamination
+    y_training[contaminated_indices] = Y_contamination
+    X_testing, y_testing = generate_X_and_y_with_w(w, x_low, x_high, testing_size, 0)
+    test_model(
+        X_training,
+        y_training,
+        contaminated_indices,
+        X_testing,
+        y_testing,
+        epsilon,
+        batch_size,
+        learning_rate,
+        max_iter,
+        "Edge Contamination"
+    )
 
 if __name__ == "__main__":
-    test_no_noise_no_contamination(1000, 9000)
-    test_no_contamination(1000, 9000, 1)
-    test_random_contamination(1000, 9000, 1, 0.8)
-    test_edge_contamination(1000, 9000, 1, 0.8)
+    test_no_noise_no_contamination(
+        3, # power
+        0.1, # epsilon
+        100, # batch size
+        0.01, # learning rate
+        10000 # max iter
+    )
+    test_no_contamination(
+        3, # power
+        1, # noise level
+        0.1, # epsilon
+        100, # batch size
+        0.01, # learning rate
+        10000 # max iter
+    )
+    test_random_contamination(
+        3, # power
+        1, # noise level
+        0.5, # epsilon
+        100, # batch size
+        0.01, # learning rate
+        10000 # max iter
+    )
+    test_edge_contamination(
+        3, # power
+        1, # noise level
+        0.5, # epsilon
+        100, # batch size
+        0.01, # learning rate
+        10000 # max iter
+    )
