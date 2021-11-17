@@ -1,5 +1,5 @@
 .vscode
+.DS_Store
 venv
 __pycache__
 losses.csv
-test_result_img

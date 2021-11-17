@@ -132,6 +132,8 @@ def test_model(
     plt.scatter(X_training[:, 0], y_bar_training,
                 s=5, c="red", label="Estimations")
     plt.legend()
+    plt.xlim(X_training.min(), X_training.max())
+    plt.ylim(y_training.min(), y_training.max())
     plt.savefig(join("test_result_img", f"{title} Training with trimming"))
 
     plt.figure()
@@ -142,6 +144,8 @@ def test_model(
     plt.scatter(X_testing[:, 0], y_bar_testing,
                 s=5, c="red", label="Estimations")
     plt.legend()
+    plt.xlim(X_training.min(), X_training.max())
+    plt.ylim(y_training.min(), y_training.max())
     plt.savefig(join("test_result_img", f"{title} Testing with trimming"))
 
     
@@ -172,6 +176,8 @@ def test_model(
     plt.scatter(X_training[:, 0], y_bar_training,
                 s=5, c="red", label="Estimations")
     plt.legend()
+    plt.xlim(X_training.min(), X_training.max())
+    plt.ylim(y_training.min(), y_training.max())
     plt.savefig(join("test_result_img", f"{title} Training without trimming"))
 
     plt.figure()
@@ -182,6 +188,8 @@ def test_model(
     plt.scatter(X_testing[:, 0], y_bar_testing,
                 s=5, c="red", label="Estimations")
     plt.legend()
+    plt.xlim(X_training.min(), X_training.max())
+    plt.ylim(y_training.min(), y_training.max())
     plt.savefig(join("test_result_img", f"{title} Testing without trimming"))
 
     
@@ -351,10 +359,46 @@ def test_edge_contamination(
         "Edge Contamination"
     )
 
+def test_parallel_line_contamination(
+    power: int,
+    noise_level: float,
+    epsilon: float,
+    batch_size: int,
+    learning_rate: float,
+    max_iter: int
+):
+    w_low = -10
+    w_high = 10
+    x_low = -1
+    x_high = 1
+    training_size = 1000
+    testing_size = 1000
+
+    rng = np.random.default_rng()
+    w = rng.uniform(w_low, w_high, power + 1)
+    X_training, y_training = generate_X_and_y_with_w(w, x_low, x_high, training_size, noise_level)
+    contamination_size = int(training_size * epsilon)
+    contaminated_indices = rng.choice(training_size, contamination_size, False)
+    y_training[contaminated_indices] += (y_training.max() - y_training.min()) * 2
+    X_testing, y_testing = generate_X_and_y_with_w(w, x_low, x_high, testing_size, 0)
+    test_model(
+        X_training,
+        y_training,
+        contaminated_indices,
+        X_testing,
+        y_testing,
+        epsilon,
+        batch_size,
+        learning_rate,
+        max_iter,
+        "Parallel Line Contamination"
+    )
+
+
 if __name__ == "__main__":
     test_no_noise_no_contamination(
         3, # power
-        0.1, # epsilon
+        0, # epsilon
         100, # batch size
         0.01, # learning rate
         10000 # max iter
@@ -362,7 +406,7 @@ if __name__ == "__main__":
     test_no_contamination(
         3, # power
         1, # noise level
-        0.1, # epsilon
+        0, # epsilon
         100, # batch size
         0.01, # learning rate
         10000 # max iter
@@ -370,7 +414,7 @@ if __name__ == "__main__":
     test_random_contamination(
         3, # power
         1, # noise level
-        0.5, # epsilon
+        0.49, # epsilon
         100, # batch size
         0.01, # learning rate
         10000 # max iter
@@ -378,7 +422,15 @@ if __name__ == "__main__":
     test_edge_contamination(
         3, # power
         1, # noise level
-        0.5, # epsilon
+        0.49, # epsilon
+        100, # batch size
+        0.01, # learning rate
+        10000 # max iter
+    )
+    test_parallel_line_contamination(
+        3, # power
+        1, # noise level
+        0.49, # epsilon
         100, # batch size
         0.01, # learning rate
         10000 # max iter
