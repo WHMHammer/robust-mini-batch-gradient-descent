@@ -120,6 +120,8 @@ def test_model(
 
     plt.figure()
     plt.suptitle(f"{title} with trimming")
+<<<<<<< HEAD
+=======
     plt.title("Training Set")
     if contaminated_indices is None:
         plt.scatter(X_training[:, 0], y_training,
@@ -160,6 +162,59 @@ def test_model(
 
     plt.figure()
     plt.suptitle(f"{title} without trimming")
+>>>>>>> 5eef7388767c3158d7124d1675ee61e663d89bc5
+    plt.title("Training Set")
+    if contaminated_indices is None:
+        plt.scatter(X_training[:, 0], y_training,
+                    s=5, c="blue", label="Raw Data")
+    else:
+        plt.scatter(np.delete(X_training[:, 0], contaminated_indices), np.delete(
+            y_training, contaminated_indices), s=5, c="blue", label="Authentic Data")
+        plt.scatter(X_training[contaminated_indices, 0],
+                    y_training[contaminated_indices], s=5, c="gray", label="Contamination")
+    plt.scatter(X_training[:, 0], y_bar_training,
+                s=5, c="red", label="Estimations")
+    plt.legend()
+<<<<<<< HEAD
+    plt.savefig(join("test_result_img", f"{title} Training with trimming"))
+
+    plt.figure()
+    plt.suptitle(f"{title} with trimming")
+=======
+    plt.savefig(join("test_result_img", f"{title} Training without trimming"))
+
+    plt.figure()
+    plt.suptitle(f"{title} without trimming")
+>>>>>>> 5eef7388767c3158d7124d1675ee61e663d89bc5
+    plt.title(f"Testing Set, MSE={testing_mse}")
+    plt.scatter(X_testing[:, 0], y_testing, s=5,
+                c="blue", label="Ground Truth")
+    plt.scatter(X_testing[:, 0], y_bar_testing,
+                s=5, c="red", label="Estimations")
+    plt.legend()
+<<<<<<< HEAD
+    plt.savefig(join("test_result_img", f"{title} Testing with trimming"))
+=======
+    plt.savefig(join("test_result_img", f"{title} Testing without trimming"))
+>>>>>>> 5eef7388767c3158d7124d1675ee61e663d89bc5
+
+    
+    w_bar = mini_batch_gradient_descent(
+        X_training,
+        y_training,
+        0,
+        batch_size,
+        learning_rate,
+        max_iter
+    )
+    y_bar_training = np.c_[np.ones(X_training.shape[0]), X_training].dot(w_bar)
+    y_bar_testing = np.c_[np.ones(X_testing.shape[0]), X_testing].dot(w_bar)
+    testing_mse = np.sum(np.square(y_bar_testing - y_testing)
+                         ) / y_bar_testing.shape[0]
+
+<<<<<<< HEAD
+    plt.figure()
+    plt.suptitle(f"{title} without trimming")
     plt.title("Training Set")
     if contaminated_indices is None:
         plt.scatter(X_training[:, 0], y_training,
@@ -185,6 +240,8 @@ def test_model(
     plt.savefig(join("test_result_img", f"{title} Testing without trimming"))
 
 
+=======
+>>>>>>> 5eef7388767c3158d7124d1675ee61e663d89bc5
 def test_no_noise_no_contamination(
     power: int,
     epsilon: float,
