@@ -351,6 +351,10 @@ def test_edge_contamination(
         "Edge Contamination"
     )
 
+
+
+
+
 if __name__ == "__main__":
     test_no_noise_no_contamination(
         3, # power
