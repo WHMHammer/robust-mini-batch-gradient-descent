@@ -12,11 +12,11 @@ We will test with random adversaries, adversaries attempting to affect the slope
 
 ## Algorithm
 
-    Procedure fit(X, y, ε, batch_size, η, max_iter) -> w:
+    Procedure fit(X, y, ε, batch_size, η, max_iter, α) -> w:
         Initialize w
         While not converged and not exceeding max_iter iterations:
             Randomly select batch_size samples without replacement
-            Calculate the squared losses of all the samples in the batch
+            Calculate the squared losses of all the samples in the batch, with α-weighted L2 regularization
             Calculate the gradient of the losses with respect to w, ignoring the effects of the ε ⋅ batch_size samples with the largest losses
             Update w := w - η ⋅ gradient
         Return w
@@ -37,6 +37,8 @@ python3 main.py
 | No noise, no contamination | ![](test_result_img/No%20Noise%20No%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Testing%20without%20trimming.png) |
 | No contamination | ![](test_result_img/No%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/No%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/No%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/No%20Contamination%20Testing%20without%20trimming.png) |
 | Random contamination | ![](test_result_img/Random%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/Random%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/Random%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/Random%20Contamination%20Testing%20without%20trimming.png) |
+| Contamination on the corners | ![](test_result_img/Edge%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/Edge%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/Edge%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/Edge%20Contamination%20Testing%20without%20trimming.png) |
+| Parallel line contamination | ![](test_result_img/Parallel%20Line%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/Parallel%20Line%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/Parallel%20Line%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/Parallel%20Line%20Contamination%20Testing%20without%20trimming.png)
 
 ## TODO
 
