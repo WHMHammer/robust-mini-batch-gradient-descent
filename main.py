@@ -14,6 +14,13 @@ if DEBUG:
     batch_index = 0
 
 
+
+def calculate_huber_loss(td_errors, kappa=1.0):
+    return torch.where(
+        td_errors.abs() <= kappa,
+        0.5 * td_errors.pow(2),
+        kappa * (td_errors.abs() - 0.5 * kappa))
+
 def l2_regularization(w: np.ndarray, alpha: float) -> Tuple[float, np.ndarray]:
     # returns loss and gradient, respectively
     gradient = w * 2 * alpha * alpha
