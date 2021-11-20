@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from os.path import join
 from statistics import stdev
 from typing import Tuple
-import
+
 
 DEBUG = False
 if DEBUG:
@@ -18,9 +18,9 @@ if DEBUG:
 
 def calculate_huber_loss(td_errors, kappa=1.0):
     return np.where(
-        td_errors.abs() <= kappa,
-        0.5 * td_errors.pow(2),
-        kappa * (td_errors.abs() - 0.5 * kappa))
+        np.absolute(td_errors) <= kappa,
+        0.5 * np.power(td_errors,2),
+        kappa * (np.absolute(td_errors) - 0.5 * kappa))
 
 def l2_regularization(w: np.ndarray, alpha: float) -> Tuple[float, np.ndarray]:
     # returns loss and gradient, respectively
@@ -39,7 +39,7 @@ def trimmed_squared_loss_and_gradient(
     # return loss and gradient, respectively
     kept_size = ceil(X.shape[0] * (1 - epsilon))
     residuals = X.dot(w) - y
-    losses = np.square(residuals)
+    losses = calculate_huber_loss(residuals)
     kept_indices = np.argsort(losses)[:kept_size]
     loss = sum(losses[kept_indices]) / kept_size
     gradient = X[kept_indices].transpose().dot(
