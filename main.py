@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from os.path import join
 from statistics import stdev
 from typing import Tuple
+import
 
 DEBUG = False
 if DEBUG:
@@ -16,7 +17,7 @@ if DEBUG:
 
 
 def calculate_huber_loss(td_errors, kappa=1.0):
-    return torch.where(
+    return np.where(
         td_errors.abs() <= kappa,
         0.5 * td_errors.pow(2),
         kappa * (td_errors.abs() - 0.5 * kappa))
