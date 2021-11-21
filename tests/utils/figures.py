@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from typing import Tuple
 
-def export_figure(x: np.ndarray,y: np.ndarray, y_bar: np.ndarray, contaminated_indices: np.ndarray,suptitle: str, title: str, filename: str):
+
+def export_figure(x: np.ndarray,y: np.ndarray, y_bar: np.ndarray, contaminated_indices: np.ndarray, suptitle: str, title: str, xlim: Tuple[float, float], ylim: Tuple[float, float], filename: str):
     plt.figure()
     if contaminated_indices is None:
         plt.scatter(x, y, s=5, c="blue", label="True Samples")
@@ -22,10 +24,8 @@ def export_figure(x: np.ndarray,y: np.ndarray, y_bar: np.ndarray, contaminated_i
     plt.title(title)
     plt.legend()
     plt.xlabel("x")
-    x_padding = (x.max() - x.min()) / 10
-    plt.xlim(x.min() - x_padding, x.max() + x_padding)
+    plt.xlim(xlim)
     plt.ylabel("y")
-    y_padding = (y.max() - y.min()) / 10
-    plt.ylim(y.min() - y_padding, y.max() + y_padding)
+    plt.ylim(ylim)
     plt.savefig(filename)
     plt.close()

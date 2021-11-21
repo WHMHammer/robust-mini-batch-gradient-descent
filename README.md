@@ -12,14 +12,13 @@ We will test with random adversaries, adversaries attempting to affect the slope
 
 ## Algorithm
 
-    Procedure fit(X, y, ε, batch_size, η, max_iter, α) -> w:
+    Procedure fit:
         Initialize w
         While not converged and not exceeding max_iter iterations:
             Randomly select batch_size samples without replacement
-            Calculate the squared losses of all the samples in the batch, with α-weighted L2 regularization
+            Calculate the losses of all the samples in the batch
             Calculate the gradient of the losses with respect to w, ignoring the effects of the ε ⋅ batch_size samples with the largest losses
-            Update w := w - η ⋅ gradient
-        Return w
+            Update w
 
 ## Run
 
@@ -27,25 +26,29 @@ We will test with random adversaries, adversaries attempting to affect the slope
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
-python3 main.py
+python3 -m tests
 ```
 
 ## Test Results
 
 | Condition | Training Set (with trimming) | Testing Set (with trimming) | Training Set (without trimming) | Testing Set (without trimming) |
 | - | - | - | - | - |
-| No noise, no contamination | ![](test_result_img/No%20Noise%20No%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/No%20Noise%20No%20Contamination%20Testing%20without%20trimming.png) |
-| No contamination | ![](test_result_img/No%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/No%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/No%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/No%20Contamination%20Testing%20without%20trimming.png) |
-| Random contamination | ![](test_result_img/Random%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/Random%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/Random%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/Random%20Contamination%20Testing%20without%20trimming.png) |
-| Contamination on the corners | ![](test_result_img/Edge%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/Edge%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/Edge%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/Edge%20Contamination%20Testing%20without%20trimming.png) |
-| Parallel line contamination | ![](test_result_img/Parallel%20Line%20Contamination%20Training%20with%20trimming.png) | ![](test_result_img/Parallel%20Line%20Contamination%20Testing%20with%20trimming.png) | ![](test_result_img/Parallel%20Line%20Contamination%20Training%20without%20trimming.png) | ![](test_result_img/Parallel%20Line%20Contamination%20Testing%20without%20trimming.png)
+| no noise no contamination | ![](test_results/no_noise_no_contamination/with_trimming_training.png) | ![](test_results/no_noise_no_contamination/with_trimming_testing.png) | ![](test_results/no_noise_no_contamination/without_trimming_training.png) | ![](test_results/no_noise_no_contamination/without_trimming_testing.png) |
+| no contamination | ![](test_results/no_contamination/with_trimming_training.png) | ![](test_results/no_contamination/with_trimming_testing.png) | ![](test_results/no_contamination/without_trimming_training.png) | ![](test_results/no_contamination/without_trimming_testing.png) |
+| random contamination | ![](test_results/random_contamination/with_trimming_training.png) | ![](test_results/random_contamination/with_trimming_testing.png) | ![](test_results/random_contamination/without_trimming_training.png) | ![](test_results/random_contamination/without_trimming_testing.png) |
+| parallel line contamination | ![](test_results/parallel_line_contamination/with_trimming_training.png) | ![](test_results/parallel_line_contamination/with_trimming_testing.png) | ![](test_results/parallel_line_contamination/without_trimming_training.png) | ![](test_results/parallel_line_contamination/without_trimming_testing.png) |
+| edge contamination | ![](test_results/edge_contamination/with_trimming_training.png) | ![](test_results/edge_contamination/with_trimming_testing.png) | ![](test_results/edge_contamination/without_trimming_training.png) | ![](test_results/edge_contamination/without_trimming_testing.png) |
+| begin contamination | ![](test_results/begin_contamination/with_trimming_training.png) | ![](test_results/begin_contamination/with_trimming_testing.png) | ![](test_results/begin_contamination/without_trimming_training.png) | ![](test_results/begin_contamination/without_trimming_testing.png) |
+| end contamination | ![](test_results/end_contamination/with_trimming_training.png) | ![](test_results/end_contamination/with_trimming_testing.png) | ![](test_results/end_contamination/without_trimming_training.png) | ![](test_results/end_contamination/without_trimming_testing.png) |
+| mid contamination | ![](test_results/mid_contamination/with_trimming_training.png) | ![](test_results/mid_contamination/with_trimming_testing.png) | ![](test_results/mid_contamination/without_trimming_training.png) | ![](test_results/mid_contamination/without_trimming_testing.png) |
+| mid rand contamination | ![](test_results/mid_rand_contamination/with_trimming_training.png) | ![](test_results/mid_rand_contamination/with_trimming_testing.png) | ![](test_results/mid_rand_contamination/without_trimming_training.png) | ![](test_results/mid_rand_contamination/without_trimming_testing.png) |
 
 ## TODO
 
-- Test with more epsilons on training data without contamination.
+- Add L1 regularization, absolute loss, and huber loss. Remove deprecated `main.py`
 
-- Test with more epsilons on training data with contamination having x and y following uniform distributions within their ranges in the authentic data.
+- Test the cases where a specific range of true samples are replaced by adversary contamination
 
-- Test with more epsilons on training data with adversary contaminations attempting to affect specific weights.
+- Find the failure boundaries of the model under different types of contamination
 
-- Verify the model with higher dimensions (powers).
+- Test whether the model still works when the fitted power is not equal to the true power

@@ -26,17 +26,17 @@ def test_model(
     y_bar_training = regressor.predict(x_training)
     y_bar_testing = regressor.predict(x_testing)
     mse = mean_square_error(y_testing, y_bar_testing)
-    export_figure(x_training, y_training, y_bar_training, contaminated_indices,
-                  f"{test_name} with trimming", "training set", join(dir_name, "with_trimming_training"))
-    export_figure(x_testing, y_testing, y_bar_testing, None,
-                  f"{test_name} with trimming", f"testing set - MSE={mse}", join(dir_name, "with_trimming_testing"))
+    export_figure(x_training, y_training, y_bar_training, contaminated_indices, f"{test_name} with trimming", f"training set, power={regressor.power}, ε={regressor.model.loss.epsilon}", (
+        x_training.min(), x_training.max()), (y_training.min(), y_training.max()), join(dir_name, "with_trimming_training"))
+    export_figure(x_testing, y_testing, y_bar_testing, None, f"{test_name} with trimming", f"testing set, power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse}", (
+        x_training.min(), x_training.max()), (y_training.min(), y_training.max()), join(dir_name, "with_trimming_testing"))
 
-    regressor.model.loss.contamination_proportion = 0
+    regressor.model.loss.epsilon = 0
     regressor.fit(x_training, y_training)
     y_bar_training = regressor.predict(x_training)
     y_bar_testing = regressor.predict(x_testing)
     mse = mean_square_error(y_testing, y_bar_testing)
-    export_figure(x_training, y_training, y_bar_training, contaminated_indices,
-                  f"{test_name} without trimming", "training set", join(dir_name, "without_trimming_training"))
-    export_figure(x_testing, y_testing, y_bar_testing, None,
-                  f"{test_name} without trimming", f"testing set - MSE={mse}", join(dir_name, "without_trimming_testing"))
+    export_figure(x_training, y_training, y_bar_training, contaminated_indices, f"{test_name} without trimming", f"training set, power={regressor.power}, ε={regressor.model.loss.epsilon}", (
+        x_training.min(), x_training.max()), (y_training.min(), y_training.max()), join(dir_name, "without_trimming_training"))
+    export_figure(x_testing, y_testing, y_bar_testing, None, f"{test_name} without trimming", f"testing set, power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse}", (
+        x_training.min(), x_training.max()), (y_training.min(), y_training.max()), join(dir_name, "without_trimming_testing"))
