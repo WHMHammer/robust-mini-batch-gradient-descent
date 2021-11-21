@@ -6,9 +6,9 @@ This repository contains the source codes and test results for the final project
 
 Mini-Batch Gradient Descent (MBGD) is a simple yet effective machine learning model as a linear (and polynomial) regressor. However, the naïve MBGD model with squared losses is very sensitive to outliers, making it vulnerable to adversary samples.
 
-Our group is proposing to add a trimming procedure based on the losses when calculating the gradients to make the MBGD model more robust. We will measure the robustness of the modified model under the ε-contamination model by calculating the mean squared error (MSE) on the training sets.
+Our group is proposing to add a trimming procedure based on the losses when calculating the gradients to make the MBGD model more robust. We will measure the robustness of the modified model under the ε-contamination model by calculating the mean squared error (MSE) on the testing sets (without noise nor contamination).
 
-We will test with random adversaries, adversaries attempting to affect the slopes, and adversaries attempting to affect the bias.
+We will test with different patterns of contamination. See the test results section for details.
 
 ## Algorithm
 
@@ -41,21 +41,23 @@ python3 -m tests
 
 ## Test Results
 
-| Condition | Training Set (with trimming) | Testing Set (with trimming) | Training Set (without trimming) | Testing Set (without trimming) |
+| Condition | Training Set (robust) | Testing Set (robust) | Training Set (naïve) | Testing Set (naïve) |
 | - | - | - | - | - |
-| no noise no contamination | ![](test_results/no_noise_no_contamination/with_trimming_training.png) | ![](test_results/no_noise_no_contamination/with_trimming_testing.png) | ![](test_results/no_noise_no_contamination/without_trimming_training.png) | ![](test_results/no_noise_no_contamination/without_trimming_testing.png) |
-| no contamination | ![](test_results/no_contamination/with_trimming_training.png) | ![](test_results/no_contamination/with_trimming_testing.png) | ![](test_results/no_contamination/without_trimming_training.png) | ![](test_results/no_contamination/without_trimming_testing.png) |
-| random contamination | ![](test_results/random_contamination/with_trimming_training.png) | ![](test_results/random_contamination/with_trimming_testing.png) | ![](test_results/random_contamination/without_trimming_training.png) | ![](test_results/random_contamination/without_trimming_testing.png) |
-| parallel line contamination | ![](test_results/parallel_line_contamination/with_trimming_training.png) | ![](test_results/parallel_line_contamination/with_trimming_testing.png) | ![](test_results/parallel_line_contamination/without_trimming_training.png) | ![](test_results/parallel_line_contamination/without_trimming_testing.png) |
-| edge contamination | ![](test_results/edge_contamination/with_trimming_training.png) | ![](test_results/edge_contamination/with_trimming_testing.png) | ![](test_results/edge_contamination/without_trimming_training.png) | ![](test_results/edge_contamination/without_trimming_testing.png) |
-| begin contamination | ![](test_results/begin_contamination/with_trimming_training.png) | ![](test_results/begin_contamination/with_trimming_testing.png) | ![](test_results/begin_contamination/without_trimming_training.png) | ![](test_results/begin_contamination/without_trimming_testing.png) |
-| end contamination | ![](test_results/end_contamination/with_trimming_training.png) | ![](test_results/end_contamination/with_trimming_testing.png) | ![](test_results/end_contamination/without_trimming_training.png) | ![](test_results/end_contamination/without_trimming_testing.png) |
-| mid contamination | ![](test_results/mid_contamination/with_trimming_training.png) | ![](test_results/mid_contamination/with_trimming_testing.png) | ![](test_results/mid_contamination/without_trimming_training.png) | ![](test_results/mid_contamination/without_trimming_testing.png) |
-| mid rand contamination | ![](test_results/mid_rand_contamination/with_trimming_training.png) | ![](test_results/mid_rand_contamination/with_trimming_testing.png) | ![](test_results/mid_rand_contamination/without_trimming_training.png) | ![](test_results/mid_rand_contamination/without_trimming_testing.png) |
+| no noise no contamination | ![](test_results/no_noise_no_contamination/robust_training.png) | ![](test_results/no_noise_no_contamination/robust_testing.png) | ![](test_results/no_noise_no_contamination/naïve_training.png) | ![](test_results/no_noise_no_contamination/naïve_testing.png) |
+| no contamination | ![](test_results/no_contamination/robust_training.png) | ![](test_results/no_contamination/robust_testing.png) | ![](test_results/no_contamination/naïve_training.png) | ![](test_results/no_contamination/naïve_testing.png) |
+| random contamination | ![](test_results/random_contamination/robust_training.png) | ![](test_results/random_contamination/robust_testing.png) | ![](test_results/random_contamination/naïve_training.png) | ![](test_results/random_contamination/naïve_testing.png) |
+| parallel line contamination | ![](test_results/parallel_line_contamination/robust_training.png) | ![](test_results/parallel_line_contamination/robust_testing.png) | ![](test_results/parallel_line_contamination/naïve_training.png) | ![](test_results/parallel_line_contamination/naïve_testing.png) |
+| edge contamination | ![](test_results/edge_contamination/robust_training.png) | ![](test_results/edge_contamination/robust_testing.png) | ![](test_results/edge_contamination/naïve_training.png) | ![](test_results/edge_contamination/naïve_testing.png) |
+| begin contamination | ![](test_results/begin_contamination/robust_training.png) | ![](test_results/begin_contamination/robust_testing.png) | ![](test_results/begin_contamination/naïve_training.png) | ![](test_results/begin_contamination/naïve_testing.png) |
+| end contamination | ![](test_results/end_contamination/robust_training.png) | ![](test_results/end_contamination/robust_testing.png) | ![](test_results/end_contamination/naïve_training.png) | ![](test_results/end_contamination/naïve_testing.png) |
+| mid contamination | ![](test_results/mid_contamination/robust_training.png) | ![](test_results/mid_contamination/robust_testing.png) | ![](test_results/mid_contamination/naïve_training.png) | ![](test_results/mid_contamination/naïve_testing.png) |
+| mid rand contamination | ![](test_results/mid_rand_contamination/robust_training.png) | ![](test_results/mid_rand_contamination/robust_testing.png) | ![](test_results/mid_rand_contamination/naïve_training.png) | ![](test_results/mid_rand_contamination/naïve_testing.png) |
 
 ## TODO
 
-- Add L1 regularization, absolute loss, and huber loss. Remove deprecated `main.py`
+- Implement L1 regularization, absolute loss, and huber loss. Remove deprecated `main.py`
+
+- Implement the convolutional pre-processing step
 
 - Test the cases where a specific range of true samples are replaced by adversary contamination
 
@@ -68,6 +70,8 @@ python3 -m tests
 [Hanming Wang](https://github.com/WHMHammer)
 
 - Proposed the trimming step as a modification to the naive MBGD model
+
+- Proposed the convolutional pre-processing step
 
 - Implemented all parts of the modified MBGD model, except for the Huber loss
 
