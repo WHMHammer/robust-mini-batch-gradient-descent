@@ -65,6 +65,8 @@ python3 -m tests
 
 - Test whether the model still works when the fitted power is not equal to the true power
 
+- Finish the final report and add it to the repo
+
 ## Contribution
 
 [Hanming Wang](https://github.com/WHMHammer)
@@ -81,13 +83,15 @@ python3 -m tests
 
 - Implemented the following tests:
 
-    - no noise, no contamination
+    - no noise no contamination
 
     - no contamination
 
     - random contamination
 
     - parallel line contamination
+
+- Wrote the README
 
 - Contributed to the group meetings
 
@@ -106,6 +110,16 @@ python3 -m tests
     - mid contamination
 
     - mid rand contamination
+
+- Wrote the following parts of the final report:
+
+    - Abstract
+
+    - Introduction
+
+    - Related works
+
+    - References
 
 - Contributed to the group meetings
 
