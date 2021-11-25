@@ -54,15 +54,9 @@ python3 -m tests
 
 ## TODO
 
-- Debug Huber Loss
+- Implement the convolutional pre-processing step and test its effectiveness
 
-- Implement the convolutional pre-processing step
-
-- Test the cases where a specific range of true samples are replaced by adversary contamination
-
-- Find the failure boundaries of the model under different types of contamination
-
-- Test whether the model still works when the fitted power is not equal to the true power
+- Find the failure boundaries of the polynomial regression model under different types of contamination
 
 - Finish the final report and add it to the repo
 
@@ -74,9 +68,9 @@ python3 -m tests
 
 - Proposed the convolutional pre-processing step
 
-- Implemented all parts of the modified MBGD model, except for the Huber loss
+- Implemented all parts of the modified MBGD model, except for the Huber loss (forward loss)
 
-- Implemented the polynomial regression model and its helper functions
+- Implemented the polynomial regression model and related helper functions
 
 - Implemented the helper functions for the tests
 
@@ -96,7 +90,7 @@ python3 -m tests
 
 [Robin Luo](https://github.com/robinzixuan)
 
-- Implemented the Huber loss
+- Implemented the Huber loss (forward loss)
 
 - Implemented the following tests:
 
