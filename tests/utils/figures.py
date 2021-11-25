@@ -16,6 +16,8 @@ def export_figure(
     filename: str
 ):
     plt.figure()
+    plt.suptitle(suptitle)
+    plt.title(title)
     if contaminated_indices is None:
         plt.scatter(x, y, s=5, c="blue", label="True Samples")
     else:
@@ -34,8 +36,6 @@ def export_figure(
             label="Contamination"
         )
     plt.scatter(x, y_bar, s=5, c="red", label="Predictions")
-    plt.suptitle(suptitle)
-    plt.title(title)
     plt.legend()
     plt.xlabel("x")
     plt.xlim(xlim)

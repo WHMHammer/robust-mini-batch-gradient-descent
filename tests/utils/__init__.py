@@ -69,20 +69,20 @@ def test_model(
         y_training,
         y_bar_training,
         contaminated_indices,
-        f"{test_name} (naïve)",
+        f"{test_name} (naive)",
         f"training set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}",
         (x_training.min(), x_training.max()),
         (y_training.min(), y_training.max()),
-        join(dir_name, "naïve_training")
+        join(dir_name, "naive_training")
     )
     export_figure(
         x_testing,
         y_testing,
         y_bar_testing,
         None,
-        f"{test_name} (naïve)",
+        f"{test_name} (naive)",
         f"testing set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse}",
         (x_training.min(), x_training.max()),
         (y_training.min(), y_training.max()),
-        join(dir_name, "naïve_testing")
+        join(dir_name, "naive_testing")
     )

@@ -5,8 +5,16 @@ from .test_parallel_line_contamination import *
 from .test_edge_contamination import *
 
 true_power = 9
+w_low = -10
+w_high = 10
+x_low = -1
+x_high = 1
+noise_level = 1
 training_size = 1000
 testing_size = 1000
+kernel_size = (0.1, 5)  # to be tuned
+strides = (0.02, 1)  # to be tuned
+preprocessor_threshold = 0.01  # to be tuned
 fitted_power = 5
 regularization_weight = 0
 epsilon = 0
@@ -17,10 +25,10 @@ max_iter = 100000
 
 test_no_noise_no_contamination(
     true_power,
-    -10,
-    10,
-    -1,
-    1,
+    w_low,
+    w_high,
+    x_low,
+    x_high,
     training_size,
     testing_size,
     PolynomialRegressor(
@@ -37,11 +45,11 @@ test_no_noise_no_contamination(
 
 test_no_contamination(
     true_power,
-    -10,
-    10,
-    -1,
-    1,
-    1,
+    w_low,
+    w_high,
+    x_low,
+    x_high,
+    noise_level,
     training_size,
     testing_size,
     PolynomialRegressor(
@@ -60,11 +68,11 @@ epsilon = 0.49
 
 test_random_contamination(
     true_power,
-    -10,
-    10,
-    -1,
-    1,
-    1,
+    w_low,
+    w_high,
+    x_low,
+    x_high,
+    noise_level,
     epsilon,
     training_size,
     testing_size,
@@ -82,11 +90,11 @@ test_random_contamination(
 
 test_parallel_line_contamination(
     true_power,
-    -10,
-    10,
-    -1,
-    1,
-    1,
+    w_low,
+    w_high,
+    x_low,
+    x_high,
+    noise_level,
     epsilon,
     training_size,
     testing_size,
@@ -102,15 +110,13 @@ test_parallel_line_contamination(
     )
 )
 
-epsilon = 0.33
-
 test_edge_contamination(
     true_power,
-    -10,
-    10,
-    -1,
-    1,
-    1,
+    w_low,
+    w_high,
+    x_low,
+    x_high,
+    noise_level,
     epsilon,
     training_size,
     testing_size,
@@ -128,11 +134,11 @@ test_edge_contamination(
 
 test_begin_contamination(
     true_power,
-    -10,
-    10,
-    -1,
-    1,
-    1,
+    w_low,
+    w_high,
+    x_low,
+    x_high,
+    noise_level,
     epsilon,
     training_size,
     testing_size,
@@ -150,11 +156,11 @@ test_begin_contamination(
 
 test_end_contamination(
     true_power,
-    -10,
-    10,
-    -1,
-    1,
-    1,
+    w_low,
+    w_high,
+    x_low,
+    x_high,
+    noise_level,
     epsilon,
     training_size,
     testing_size,
@@ -172,11 +178,11 @@ test_end_contamination(
 
 test_mid_contamination(
     true_power,
-    -10,
-    10,
-    -1,
-    1,
-    1,
+    w_low,
+    w_high,
+    x_low,
+    x_high,
+    noise_level,
     epsilon,
     training_size,
     testing_size,
