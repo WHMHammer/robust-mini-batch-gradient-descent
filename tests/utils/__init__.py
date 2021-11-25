@@ -1,8 +1,11 @@
 from os import makedirs
 from os.path import join
 
-from src.loss import SquaredLoss
-from .polynomial_regressor import *
+from src.preprocessor import *
+from src.regularization import *
+from src.loss import *
+from src.mini_batch_gradient_descent import *
+from src.polynomial_regressor import *
 from .figures import *
 
 
@@ -54,6 +57,7 @@ def test_model(
         join(dir_name, "robust_testing")
     )
 
+    regressor.preprocessor = NullPreprocessor()
     regressor.model.regularization_weight = 0
     regressor.model.loss = SquaredLoss(0)
     regressor.fit(x_training, y_training)

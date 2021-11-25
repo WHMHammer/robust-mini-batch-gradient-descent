@@ -1,16 +1,13 @@
-from src.regularization import *
-from src.loss import *
-from .utils.polynomial_regressor import *
-
+from .utils import *
 from .test_no_contamination import *
 from .test_random_contamination import *
 from .test_parallel_line_contamination import *
 from .test_edge_contamination import *
 
-true_power = 5
+true_power = 9
 training_size = 1000
 testing_size = 1000
-fitted_power = 9
+fitted_power = 5
 regularization_weight = 0
 epsilon = 0
 huber_loss_threshold = 20
@@ -27,6 +24,7 @@ test_no_noise_no_contamination(
     training_size,
     testing_size,
     PolynomialRegressor(
+        NullPreprocessor(),
         fitted_power,
         L1Regularization(),
         regularization_weight,
@@ -47,6 +45,7 @@ test_no_contamination(
     training_size,
     testing_size,
     PolynomialRegressor(
+        NullPreprocessor(),
         fitted_power,
         L1Regularization(),
         regularization_weight,
@@ -70,6 +69,7 @@ test_random_contamination(
     training_size,
     testing_size,
     PolynomialRegressor(
+        NullPreprocessor(),
         fitted_power,
         L1Regularization(),
         regularization_weight,
@@ -91,6 +91,7 @@ test_parallel_line_contamination(
     training_size,
     testing_size,
     PolynomialRegressor(
+        NullPreprocessor(),
         fitted_power,
         L1Regularization(),
         regularization_weight,
@@ -114,6 +115,7 @@ test_edge_contamination(
     training_size,
     testing_size,
     PolynomialRegressor(
+        NullPreprocessor(),
         fitted_power,
         L1Regularization(),
         regularization_weight,
@@ -135,6 +137,7 @@ test_begin_contamination(
     training_size,
     testing_size,
     PolynomialRegressor(
+        NullPreprocessor(),
         fitted_power,
         L1Regularization(),
         regularization_weight,
@@ -156,6 +159,7 @@ test_end_contamination(
     training_size,
     testing_size,
     PolynomialRegressor(
+        NullPreprocessor(),
         fitted_power,
         L1Regularization(),
         regularization_weight,
@@ -177,6 +181,7 @@ test_mid_contamination(
     training_size,
     testing_size,
     PolynomialRegressor(
+        NullPreprocessor(),
         fitted_power,
         L1Regularization(),
         regularization_weight,

@@ -1,9 +1,10 @@
 import numpy as np
 from statistics import stdev
 
-from src.regularization import Regularization
-from src.loss import Loss
-from src.model import MiniBatchGradientDescent
+from .preprocessor import Preprocessor
+from .regularization import Regularization
+from .loss import Loss
+from .mini_batch_gradient_descent import MiniBatchGradientDescent
 
 
 def power_expand(x: np.ndarray, power: int) -> np.ndarray:
@@ -20,6 +21,7 @@ def power_expand(x: np.ndarray, power: int) -> np.ndarray:
 class PolynomialRegressor:
     def __init__(
         self,
+        preprocessor: Preprocessor,
         power: int,
         regularization: Regularization,
         regularization_weight: float,
@@ -28,8 +30,9 @@ class PolynomialRegressor:
         batch_size: int,
         max_iter: int
     ):
-        self.power = power
-        self.model = MiniBatchGradientDescent(
+        self.preprocessor: Preprocessor = preprocessor
+        self.power: int = power
+        self.model: MiniBatchGradientDescent = MiniBatchGradientDescent(
             regularization,
             regularization_weight,
             loss,
@@ -39,6 +42,7 @@ class PolynomialRegressor:
         )
 
     def fit(self, x: np.ndarray, y: np.ndarray):
+        x, y = self.preprocessor(x, y)
         self.model.fit(power_expand(x, self.power), y)
 
     def predict(self, x: np.ndarray) -> np.ndarray:
