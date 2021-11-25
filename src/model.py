@@ -5,7 +5,15 @@ from .loss import Loss
 
 
 class MiniBatchGradientDescent:
-    def __init__(self, regularization: Regularization, regularization_weight: float, loss: Loss, learning_rate: float, batch_size: int, max_iter: int):
+    def __init__(
+        self,
+        regularization: Regularization,
+        regularization_weight: float,
+        loss: Loss,
+        learning_rate: float,
+        batch_size: int,
+        max_iter: int
+    ):
         self.regularization: Regularization = regularization
         self.regularization_weight: float = regularization_weight
         self.loss: Loss = loss
@@ -20,12 +28,17 @@ class MiniBatchGradientDescent:
         self.w = np.ones(dimension + 1)
         indices = self.rng.choice(sample_size, self.batch_size, False)
         prev_loss, gradient = self.loss(
-            X[indices], self.w, y[indices]) + self.regularization_weight * self.regularization(self.w)
-        for i in range(self.max_iter):
+            X[indices],
+            self.w,
+            y[indices]
+        ) + self.regularization_weight * self.regularization(self.w)
+        for _ in range(self.max_iter):
             self.w -= self.learning_rate * gradient
             indices = self.rng.choice(sample_size, self.batch_size, False)
             loss, gradient = self.loss(
-                X[indices], self.w, y[indices]) + self.regularization_weight * self.regularization(self.w)
+                X[indices],
+                self.w, y[indices]
+            ) + self.regularization_weight * self.regularization(self.w)
             if abs(loss - prev_loss) / prev_loss < 1e-5:
                 return
             prev_loss = loss

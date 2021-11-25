@@ -18,7 +18,16 @@ def power_expand(x: np.ndarray, power: int) -> np.ndarray:
 
 
 class PolynomialRegressor:
-    def __init__(self, power: int, regularization: Regularization, regularization_weight: float, loss: Loss, learning_rate: float, batch_size: int, max_iter: int):
+    def __init__(
+        self,
+        power: int,
+        regularization: Regularization,
+        regularization_weight: float,
+        loss: Loss,
+        learning_rate: float,
+        batch_size: int,
+        max_iter: int
+    ):
         self.power = power
         self.model = MiniBatchGradientDescent(
             regularization, regularization_weight,
@@ -38,7 +47,13 @@ def generate_random_weights(power: int, w_low: float, w_high: float) -> np.ndarr
     return rng.uniform(w_low, w_high, power + 1)
 
 
-def generate_random_samples(w: np.ndarray, x_low: float, x_high: float, noise_level: float, sample_size: int):
+def generate_random_samples(
+    w: np.ndarray,
+    x_low: float,
+    x_high: float,
+    noise_level: float,
+    sample_size: int
+):
     # return x and y, respectively
     rng = np.random.default_rng()
     x = rng.uniform(x_low, x_high, sample_size)

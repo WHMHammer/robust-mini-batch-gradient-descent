@@ -55,7 +55,7 @@ python3 -m tests
 
 ## TODO
 
-- Implement L1 regularization, absolute loss, and huber loss. Remove deprecated `main.py`
+- Debug Huber Loss
 
 - Implement the convolutional pre-processing step
 
