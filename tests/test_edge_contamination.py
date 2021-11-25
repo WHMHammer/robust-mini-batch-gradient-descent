@@ -31,8 +31,8 @@ def test_edge_contamination(
         contamination_size
     )
     y_contamination = rng.uniform(
-        y_training.max() * 2 - (y_training.max() - y_training.min()) / 10,
-        y_training.max() * 2,
+        y_training.max() + (y_training.max() - y_training.min()) * 1.9,
+        y_training.max() + (y_training.max() - y_training.min()) * 2,
         contamination_size
     )
     x_training[contaminated_indices] = x_contamination

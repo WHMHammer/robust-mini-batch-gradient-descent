@@ -51,7 +51,6 @@ python3 -m tests
 | begin contamination | ![](test_results/begin_contamination/robust_training.png) | ![](test_results/begin_contamination/robust_testing.png) | ![](test_results/begin_contamination/naïve_training.png) | ![](test_results/begin_contamination/naïve_testing.png) |
 | end contamination | ![](test_results/end_contamination/robust_training.png) | ![](test_results/end_contamination/robust_testing.png) | ![](test_results/end_contamination/naïve_training.png) | ![](test_results/end_contamination/naïve_testing.png) |
 | mid contamination | ![](test_results/mid_contamination/robust_training.png) | ![](test_results/mid_contamination/robust_testing.png) | ![](test_results/mid_contamination/naïve_training.png) | ![](test_results/mid_contamination/naïve_testing.png) |
-| mid rand contamination | ![](test_results/mid_rand_contamination/robust_training.png) | ![](test_results/mid_rand_contamination/robust_testing.png) | ![](test_results/mid_rand_contamination/naïve_training.png) | ![](test_results/mid_rand_contamination/naïve_testing.png) |
 
 ## TODO
 

@@ -30,9 +30,12 @@ class PolynomialRegressor:
     ):
         self.power = power
         self.model = MiniBatchGradientDescent(
-            regularization, regularization_weight,
-            loss, learning_rate,
-            batch_size, max_iter
+            regularization,
+            regularization_weight,
+            loss,
+            learning_rate,
+            batch_size,
+            max_iter
         )
 
     def fit(self, x: np.ndarray, y: np.ndarray):

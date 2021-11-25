@@ -20,7 +20,7 @@ def test_model(
     regressor: PolynomialRegressor,
     test_name: str
 ):
-    print(f"Testing {test_name} ...")
+    print(f"Testing {test_name}.")
     dir_name = join("test_results", test_name.replace(" ", "_"))
     try:
         makedirs(dir_name)

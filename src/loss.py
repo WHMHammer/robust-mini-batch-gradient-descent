@@ -13,6 +13,23 @@ class Loss(ABC):
         raise NotImplementedError
 
 
+class AbsoluteLoss(Loss):
+    def __init__(self, epsilon: float):
+        self.epsilon: float = epsilon
+
+    def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray) -> Tuple[float, np.ndarray]:
+        kept_size = ceil(X.shape[0] * (1 - self.epsilon))
+        residuals = X.dot(w) - y
+        losses = np.absolute(residuals)
+        kept_indices = np.argsort(losses)[:kept_size]
+        return (
+            losses[kept_indices].sum() / kept_size,
+            X[kept_indices].T.dot(
+                np.sign(residuals[kept_indices])
+            ) / kept_size
+        )
+
+
 class SquaredLoss(Loss):
     def __init__(self, epsilon: float):
         self.epsilon: float = epsilon

@@ -9,6 +9,13 @@ class Regularization(ABC):
         raise NotImplementedError
 
 
+class L1Regularization(Regularization):
+    def __call__(self, w: np.ndarray) -> Tuple[float, np.ndarray]:
+        gradient = np.sign(w)
+        gradient[0] = 0
+        return np.absolute(w)[1:].sum(), gradient
+
+
 class L2Regularization(Regularization):
     def __call__(self, w: np.ndarray) -> Tuple[float, np.ndarray]:
         gradient = 2 * w

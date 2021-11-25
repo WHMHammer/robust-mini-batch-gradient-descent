@@ -37,7 +37,8 @@ class MiniBatchGradientDescent:
             indices = self.rng.choice(sample_size, self.batch_size, False)
             loss, gradient = self.loss(
                 X[indices],
-                self.w, y[indices]
+                self.w,
+                y[indices]
             ) + self.regularization_weight * self.regularization(self.w)
             if abs(loss - prev_loss) / prev_loss < 1e-5:
                 return
