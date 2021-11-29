@@ -30,6 +30,8 @@ def test_model(
     except FileExistsError:
         pass
 
+    x_training_transformed, y_training_transformed = regressor.preprocessor(
+        x_training, y_training)
     regressor.fit(x_training, y_training)
     y_bar_training = regressor.predict(x_training)
     y_bar_testing = regressor.predict(x_testing)
@@ -37,6 +39,8 @@ def test_model(
     export_figure(
         x_training,
         y_training,
+        x_training_transformed,
+        y_training_transformed,
         y_bar_training,
         contaminated_indices,
         f"{test_name} (robust)",
@@ -48,6 +52,8 @@ def test_model(
     export_figure(
         x_testing,
         y_testing,
+        None,
+        None,
         y_bar_testing,
         None,
         f"{test_name} (robust)",
@@ -67,6 +73,8 @@ def test_model(
     export_figure(
         x_training,
         y_training,
+        None,
+        None,
         y_bar_training,
         contaminated_indices,
         f"{test_name} (naive)",
@@ -78,6 +86,8 @@ def test_model(
     export_figure(
         x_testing,
         y_testing,
+        None,
+        None,
         y_bar_testing,
         None,
         f"{test_name} (naive)",
