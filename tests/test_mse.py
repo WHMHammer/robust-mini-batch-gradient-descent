@@ -77,17 +77,27 @@ def explore_figure(parameter, mse_naive, mse_robust, x_label, y_lable, title):
     plt.title(title)
     plt.savefig("test_results/mse_figure/"+str(title)+".png")
 
-def draw_mse_epsilon(true_power,w_low,w_high,x_low,x_high,noise_level,training_size,testing_size,regressor):
+def draw_mse_epsilon(true_power,w_low,w_high,x_low,x_high,noise_level,training_size,testing_size):
     mse_robust_list = []
     mse_naive_list = []
-    repeat_times = 20
-    x_distance = 0.2
+    repeat_times = 30
+    x_distance = 0.3
     y_distance = 0.3
     parameter_list = np.around(np.arange(0.05, 0.49, 0.05), decimals=2)
     for e in parameter_list:
         sum_robust = 0
         sum_naive = 0
         for i in range(0, repeat_times):
+            regressor = PolynomialRegressor(
+                NullPreprocessor(),
+                fitted_power,
+                L1Regularization(),
+                regularization_weight,
+                HuberLoss(epsilon, huber_loss_threshold),
+                learning_rate,
+                batch_size,
+                max_iter
+            )
             (mse_robust, mse_naive)=test_mse_distance(true_power,w_low,w_high,x_low,x_high,noise_level,
                                               e, x_distance, y_distance,training_size,testing_size,regressor)
             sum_naive += mse_naive
@@ -95,30 +105,40 @@ def draw_mse_epsilon(true_power,w_low,w_high,x_low,x_high,noise_level,training_s
         mse_naive_list.append(sum_naive/repeat_times)
         mse_robust_list.append(sum_robust/repeat_times)
     explore_figure(parameter_list, mse_naive_list, mse_robust_list, "epsilon", "mse",
-                   "1 epsilon_vs_mse_x=" + str(x_distance) + "_y=" + str(y_distance))
+                   "epsilon_vs_mse_x=" + str(x_distance) + "_y=" + str(y_distance))
 
-def draw_mse_y_distance(true_power,w_low,w_high,x_low,x_high,noise_level,training_size,testing_size,regressor):
+def draw_mse_y_distance(true_power,w_low,w_high,x_low,x_high,noise_level,training_size,testing_size):
     mse_robust_list = []
     mse_naive_list = []
     repeat_times = 20
     epsilon = 0.49
     x_distance = 0
-    parameter_list = np.around(np.arange(-0.5, 0.5, 0.08), decimals=2)
+    parameter_list = np.around(np.arange(-0.5, 0.5, 0.05), decimals=2)
     for y in parameter_list:
         sum_robust = 0
         sum_naive = 0
         for i in range(0, repeat_times):
-            (mse_robust, mse_naive)=test_mse_distance(true_power,w_low,w_high,x_low,x_high,noise_level,
-                                              epsilon, x_distance, y, training_size,testing_size,regressor)
+            regressor = PolynomialRegressor(
+                NullPreprocessor(),
+                fitted_power,
+                L1Regularization(),
+                regularization_weight,
+                HuberLoss(epsilon, huber_loss_threshold),
+                learning_rate,
+                batch_size,
+                max_iter
+            )
+            (mse_robust, mse_naive)=test_mse_distance(true_power,w_low,w_high,x_low,x_high,
+                                                      noise_level,epsilon, x_distance, y, training_size,testing_size,regressor)
             sum_naive += mse_naive
             sum_robust += mse_robust
         mse_naive_list.append(sum_naive/repeat_times)
         mse_robust_list.append(sum_robust/repeat_times)
-    explore_figure(parameter_list, mse_naive_list, mse_robust_list, "epsilon", "mse",
-                   "1 epsilon_vs_y_distance x=" + str(x_distance) + "_e=" + str(epsilon))
+    explore_figure(parameter_list, mse_naive_list, mse_robust_list, "y_distance", "mse",
+                   "epsilon_vs_y_distance x=" + str(x_distance) + "_e=" + str(epsilon))
 
 
-def draw_mse_x_distance(true_power,w_low,w_high,x_low,x_high,noise_level,training_size,testing_size,regressor):
+def draw_mse_x_distance(true_power,w_low,w_high,x_low,x_high,noise_level,training_size,testing_size):
     mse_robust_list = []
     mse_naive_list = []
     repeat_times = 20
@@ -129,14 +149,24 @@ def draw_mse_x_distance(true_power,w_low,w_high,x_low,x_high,noise_level,trainin
         sum_robust = 0
         sum_naive = 0
         for i in range(0, repeat_times):
+            regressor = PolynomialRegressor(
+                NullPreprocessor(),
+                fitted_power,
+                L1Regularization(),
+                regularization_weight,
+                HuberLoss(epsilon, huber_loss_threshold),
+                learning_rate,
+                batch_size,
+                max_iter
+            )
             (mse_robust, mse_naive)=test_mse_distance(true_power,w_low,w_high,x_low,x_high,noise_level,
                                               epsilon, x, y_distance, training_size,testing_size,regressor)
             sum_naive += mse_naive
             sum_robust += mse_robust
         mse_naive_list.append(sum_naive/repeat_times)
         mse_robust_list.append(sum_robust/repeat_times)
-    explore_figure(parameter_list, mse_naive_list, mse_robust_list, "epsilon", "mse",
-                   "1 epsilon_vs_x_distance y=" + str(y_distance) + "_e=" + str(epsilon))
+    explore_figure(parameter_list, mse_naive_list, mse_robust_list, "x_distance", "mse",
+                   "epsilon_vs_x_distance y=" + str(y_distance) + "_e=" + str(epsilon))
 
 if __name__ == "__main__":
     true_power = 9
@@ -147,7 +177,7 @@ if __name__ == "__main__":
     noise_level = 1
     training_size = 1000
     testing_size = 1000
-    fitted_power = 9
+    fitted_power = 5
     regularization_weight = 0
     epsilon = 0.49
     huber_loss_threshold = 20
@@ -166,8 +196,8 @@ if __name__ == "__main__":
                             )
 
     # test_mse_density(true_power, w_low, w_high, x_low, x_high, noise_level,
-    #                  0.4, 0.5, "dense",training_size, testing_size, regressor)
-    # draw_mse_epsilon(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size, regressor)
+    #                  0.4, 0.5, "uncomplete",training_size, testing_size, regressor)
+    draw_mse_epsilon(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)
 
-    # draw_mse_y_distance(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size, regressor)
-    draw_mse_x_distance(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size, regressor)
+    # draw_mse_y_distance(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)
+    # draw_mse_x_distance(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)

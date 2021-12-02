@@ -51,7 +51,7 @@ if __name__ == "__main__":
     batch_size = 100
     max_iter = 100000
     regressor =PolynomialRegressor(
-                                ClusteringPreprocessor(mode="DBSCAN", eps=0.5, min_samples=100),
+                                ClusteringPreprocessor(mode="DBSCAN", eps=2, min_samples=400),
                                 fitted_power,
                                 L1Regularization(),
                                 regularization_weight,
@@ -60,10 +60,10 @@ if __name__ == "__main__":
                                 batch_size,
                                 max_iter
                             )
-    test_clustering(true_power,w_low,w_high,x_low,x_high,noise_level,
-                            epsilon, 0.1, 0.1,
-                            training_size,testing_size,
-                            regressor
-    )
-    # test_mse_distance(true_power, w_low, w_high, x_low, x_high, noise_level,
-    #                   e, x_distance, y_distance, training_size, testing_size, regressor)
+    # test_clustering(true_power,w_low,w_high,x_low,x_high,noise_level,
+    #                         epsilon, 0.2, 0.2,
+    #                         training_size,testing_size,
+    #                         regressor
+    # )
+    test_mse_distance(true_power, w_low, w_high, x_low, x_high, noise_level,
+                      0.49, 0.2, 0.2, training_size, testing_size, regressor)

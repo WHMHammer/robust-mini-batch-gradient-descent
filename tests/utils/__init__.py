@@ -32,15 +32,51 @@ def test_model(
 
     x_training_transformed, y_training_transformed = regressor.preprocessor(
         x_training, y_training)
-    regressor.fit(x_training, y_training)
+    regressor.fit(x_training_transformed, y_training_transformed)
     y_bar_training = regressor.predict(x_training)
     y_bar_testing = regressor.predict(x_testing)
-    mse = mean_square_error(y_testing, y_bar_testing)
+    mse_naive = mean_square_error(y_testing, y_bar_testing)
     export_figure(
         x_training,
         y_training,
         x_training_transformed,
         y_training_transformed,
+        y_bar_training,
+        contaminated_indices,
+        f"{test_name} (preprocess)",
+        f"training set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}",
+        (x_training.min(), x_training.max()),
+        (y_training.min(), y_training.max()),
+        join(dir_name, "preprocess_training")
+    )
+    export_figure(
+        x_testing,
+        y_testing,
+        None,
+        None,
+        y_bar_testing,
+        None,
+        f"{test_name} (preprocess)",
+        f"testing set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse_naive}",
+        (x_training.min(), x_training.max()),
+        (y_training.min(), y_training.max()),
+        join(dir_name, "preprocess_testing")
+    )
+
+    regressor.preprocessor = NullPreprocessor()
+    regressor.model.regularization_weight = 0
+    regressor.model.loss = SquaredLoss(0)
+    regressor.fit(x_training, y_training)
+    y_bar_training = regressor.predict(x_training)
+    y_bar_testing = regressor.predict(x_testing)
+    mse_robust = mean_square_error(y_testing, y_bar_testing)
+    export_figure(
+        x_training,
+        y_training,
+        # x_training_transformed,
+        # y_training_transformed,
+        None,
+        None,
         y_bar_training,
         contaminated_indices,
         f"{test_name} (robust)",
@@ -57,11 +93,12 @@ def test_model(
         y_bar_testing,
         None,
         f"{test_name} (robust)",
-        f"testing set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse}",
+        f"testing set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse_robust}",
         (x_training.min(), x_training.max()),
         (y_training.min(), y_training.max()),
         join(dir_name, "robust_testing")
     )
+
 
     regressor.preprocessor = NullPreprocessor()
     regressor.model.regularization_weight = 0
@@ -69,7 +106,7 @@ def test_model(
     regressor.fit(x_training, y_training)
     y_bar_training = regressor.predict(x_training)
     y_bar_testing = regressor.predict(x_testing)
-    mse = mean_square_error(y_testing, y_bar_testing)
+    mse_naive = mean_square_error(y_testing, y_bar_testing)
     export_figure(
         x_training,
         y_training,
@@ -91,8 +128,9 @@ def test_model(
         y_bar_testing,
         None,
         f"{test_name} (naive)",
-        f"testing set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse}",
+        f"testing set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse_naive}",
         (x_training.min(), x_training.max()),
         (y_training.min(), y_training.max()),
         join(dir_name, "naive_testing")
     )
+    return (mse_robust, mse_naive)
