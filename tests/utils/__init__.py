@@ -35,7 +35,7 @@ def test_model(
     regressor.fit(x_training_transformed, y_training_transformed)
     y_bar_training = regressor.predict(x_training)
     y_bar_testing = regressor.predict(x_testing)
-    mse_naive = mean_square_error(y_testing, y_bar_testing)
+    mse_preprocess = mean_square_error(y_testing, y_bar_testing)
     export_figure(
         x_training,
         y_training,
@@ -57,7 +57,7 @@ def test_model(
         y_bar_testing,
         None,
         f"{test_name} (preprocess)",
-        f"testing set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse_naive}",
+        f"testing set, true power={true_power}, fitted power={regressor.power}, ε={regressor.model.loss.epsilon}, MSE={mse_preprocess}",
         (x_training.min(), x_training.max()),
         (y_training.min(), y_training.max()),
         join(dir_name, "preprocess_testing")
@@ -65,7 +65,6 @@ def test_model(
 
     regressor.preprocessor = NullPreprocessor()
     regressor.model.regularization_weight = 0
-    regressor.model.loss = SquaredLoss(0)
     regressor.fit(x_training, y_training)
     y_bar_training = regressor.predict(x_training)
     y_bar_testing = regressor.predict(x_testing)
@@ -100,7 +99,6 @@ def test_model(
     )
 
 
-    regressor.preprocessor = NullPreprocessor()
     regressor.model.regularization_weight = 0
     regressor.model.loss = SquaredLoss(0)
     regressor.fit(x_training, y_training)

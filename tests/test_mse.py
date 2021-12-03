@@ -105,7 +105,7 @@ def draw_mse_epsilon(true_power,w_low,w_high,x_low,x_high,noise_level,training_s
         mse_naive_list.append(sum_naive/repeat_times)
         mse_robust_list.append(sum_robust/repeat_times)
     explore_figure(parameter_list, mse_naive_list, mse_robust_list, "epsilon", "mse",
-                   "epsilon_vs_mse_x=" + str(x_distance) + "_y=" + str(y_distance))
+                   "mse_vs_epsilon_x=" + str(x_distance) + "_y=" + str(y_distance))
 
 def draw_mse_y_distance(true_power,w_low,w_high,x_low,x_high,noise_level,training_size,testing_size):
     mse_robust_list = []
@@ -135,7 +135,7 @@ def draw_mse_y_distance(true_power,w_low,w_high,x_low,x_high,noise_level,trainin
         mse_naive_list.append(sum_naive/repeat_times)
         mse_robust_list.append(sum_robust/repeat_times)
     explore_figure(parameter_list, mse_naive_list, mse_robust_list, "y_distance", "mse",
-                   "epsilon_vs_y_distance x=" + str(x_distance) + "_e=" + str(epsilon))
+                   "mse_vs_y_distance x=" + str(x_distance) + "_e=" + str(epsilon))
 
 
 def draw_mse_x_distance(true_power,w_low,w_high,x_low,x_high,noise_level,training_size,testing_size):
@@ -166,7 +166,7 @@ def draw_mse_x_distance(true_power,w_low,w_high,x_low,x_high,noise_level,trainin
         mse_naive_list.append(sum_naive/repeat_times)
         mse_robust_list.append(sum_robust/repeat_times)
     explore_figure(parameter_list, mse_naive_list, mse_robust_list, "x_distance", "mse",
-                   "epsilon_vs_x_distance y=" + str(y_distance) + "_e=" + str(epsilon))
+                   "mse_vs_x_distance y=" + str(y_distance) + "_e=" + str(epsilon))
 
 if __name__ == "__main__":
     true_power = 9
@@ -195,9 +195,11 @@ if __name__ == "__main__":
                                 max_iter
                             )
 
+    # test_mse_distance(true_power, w_low, w_high, x_low, x_high, noise_level,
+    #                   0.4, 0.3, 0.3, training_size, testing_size, regressor)
     # test_mse_density(true_power, w_low, w_high, x_low, x_high, noise_level,
     #                  0.4, 0.5, "uncomplete",training_size, testing_size, regressor)
-    draw_mse_epsilon(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)
+    # draw_mse_epsilon(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)
 
     # draw_mse_y_distance(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)
     # draw_mse_x_distance(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)
