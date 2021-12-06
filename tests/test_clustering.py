@@ -14,7 +14,7 @@ def test_clustering(power: int, w_low: float, w_high: float, x_low: float, x_hig
     rng = np.random.default_rng()
     w = generate_random_weights(power, w_low, w_high)
     # x_training, y_training = generate_random_samples(w, x_low, x_high, noise_level, training_size)
-    x_training, y_training = generate_uncomplete_samples(w, x_low, x_high, noise_level, 0.5, 0.5, training_size)
+    x_training, y_training = generate_incomplete_samples(w, x_low, x_high, noise_level, 0.5, 0.5, training_size)
     contamination_size = int(training_size * epsilon)
     contaminated_indices = rng.choice(training_size, contamination_size, False)
     x_contamination = rng.uniform(

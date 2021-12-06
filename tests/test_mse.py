@@ -56,8 +56,8 @@ def test_mse_density(power: int, w_low: float, w_high: float, x_low: float, x_hi
                       training_size: int, testing_size: int, regressor: PolynomialRegressor):
     rng = np.random.default_rng()
     w = generate_random_weights(power, w_low, w_high)
-    if mode == "uncomplete":
-        x_training, y_training = generate_uncomplete_samples(w, x_low, x_high, noise_level, x_begin, x_end, training_size)
+    if mode == "incomplete":
+        x_training, y_training = generate_incomplete_samples(w, x_low, x_high, noise_level, x_begin, x_end, training_size)
     elif mode == "dense":
         x_training, y_training = generate_dense_samples(w, x_low, x_high, noise_level, x_begin, x_end, training_size)
     x_testing, y_testing = generate_random_samples(w, x_low, x_high, 0, testing_size)
@@ -198,7 +198,7 @@ if __name__ == "__main__":
     # test_mse_distance(true_power, w_low, w_high, x_low, x_high, noise_level,
     #                   0.4, 0.3, 0.3, training_size, testing_size, regressor)
     # test_mse_density(true_power, w_low, w_high, x_low, x_high, noise_level,
-    #                  0.4, 0.5, "uncomplete",training_size, testing_size, regressor)
+    #                  0.4, 0.5, "incomplete",training_size, testing_size, regressor)
     # draw_mse_epsilon(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)
 
     # draw_mse_y_distance(true_power, w_low, w_high, x_low, x_high, noise_level, training_size, testing_size)

@@ -111,19 +111,17 @@ python3 -m tests
 
 - Proposed the trimming step as a modification to the naive MBGD model
 
-- Proposed the convolutional pre-processing step
+- Proposed the kernel preprocessor
 
 - Implemented all parts of the modified MBGD model, except for the Huber loss (forward loss)
 
-- Implemented all parts of the preprocessing steps
+- Implemented the kernel preprocessor
 
 - Implemented the polynomial regression model and related helper functions
 
 - Implemented the helper functions for the tests
 
-- Implemented the following tests:
-
-    - no noise no contamination
+- Tested the following contamination families:
 
     - no contamination
 
@@ -133,23 +131,13 @@ python3 -m tests
 
 - Wrote the README
 
-- Contributed to the group meetings
-
 [Robin Luo](https://github.com/robinzixuan)
 
 - Implemented the Huber loss (forward loss)
 
-- Implemented the following tests:
+- Tested the following contamination family:
 
     - edge contamination
-
-    - begin contamination
-
-    - end contamination
-
-    - mid contamination
-
-    - mid rand contamination
 
 - Wrote the following parts of the final report:
 
@@ -161,8 +149,16 @@ python3 -m tests
 
     - References
 
-- Contributed to the group meetings
-
 [Yue Wang](https://github.com/glazialuna)
 
-- Contributed to the group meetings
+- Proposed the clustering preprocessor
+
+- Implemented the clustering preprocessor
+
+- Tested on the following relations between MSE and contamination properties:
+
+    - MSE vs. contamination distance
+
+    - MSE vs. contamination density
+
+    - MSE vs. epsilon
