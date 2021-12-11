@@ -131,6 +131,14 @@ python3 -m tests
 
 - Wrote the README
 
+- Wrote the following parts of the final report:
+
+    - Model introduction
+
+    - Kernel preprocessor introduction
+
+    - Tests on the no contamination, random contamination, and parallel line contamination families
+
 [Robin Luo](https://github.com/robinzixuan)
 
 - Implemented the Huber loss (forward loss)
@@ -162,3 +170,9 @@ python3 -m tests
     - MSE vs. contamination density
 
     - MSE vs. epsilon
+
+- Wrote the following parts of the final report:
+
+    - Clustering preprocessor introduction
+
+    - Tests on the failure boundaries
