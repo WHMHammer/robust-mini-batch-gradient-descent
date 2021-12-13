@@ -67,23 +67,3 @@ def generate_random_samples(
     y = np.c_[np.ones(sample_size), power_expand(x, w.shape[0] - 1)].dot(w)
     y += rng.normal(0, stdev(y) * noise_level, sample_size)
     return x, y
-
-def generate_incomplete_samples(w: np.ndarray,x_low: float,x_high: float,noise_level: float,
-                                x_begin:float, x_end:float, sample_size: int):
-    rng = np.random.default_rng()
-    x1 = rng.uniform(x_low, x_low + (x_high - x_low) * x_begin, sample_size // 2)
-    x2 = rng.uniform(x_low + (x_high - x_low) * x_end, x_high, sample_size // 2)
-    x = np.append(x1, x2)
-    y = np.c_[np.ones(sample_size), power_expand(x, w.shape[0] - 1)].dot(w)
-    y += rng.normal(0, stdev(y) * noise_level, sample_size)
-    return x, y
-
-def generate_dense_samples(w: np.ndarray, x_low: float, x_high: float, noise_level: float,
-                           x_begin:float, x_end:float, sample_size: int):
-    rng = np.random.default_rng()
-    x1 = rng.uniform(x_low+(x_high-x_low)*x_begin, x_low + (x_high - x_low) * x_end, sample_size//2)
-    x2 = rng.uniform(x_low, x_high, sample_size // 2)
-    x = np.append(x1, x2)
-    y = np.c_[np.ones(sample_size), power_expand(x, w.shape[0] - 1)].dot(w)
-    y += rng.normal(0, stdev(y) * noise_level, sample_size)
-    return x, y

@@ -8,14 +8,12 @@ class MiniBatchGradientDescent:
     def __init__(
         self,
         regularization: Regularization,
-        regularization_weight: float,
         loss: Loss,
         learning_rate: float,
         batch_size: int,
         max_iter: int
     ):
         self.regularization: Regularization = regularization
-        self.regularization_weight: float = regularization_weight
         self.loss: Loss = loss
         self.learning_rate: float = learning_rate,
         self.batch_size: int = batch_size
@@ -31,7 +29,10 @@ class MiniBatchGradientDescent:
             X[indices],
             self.w,
             y[indices]
-        ) + self.regularization_weight * self.regularization(self.w)
+        )
+        regularization_loss, regularization_gradient = self.regularization(self.w)
+        prev_loss += regularization_loss
+        gradient += regularization_gradient
         for _ in range(self.max_iter):
             self.w -= self.learning_rate * gradient
             indices = self.rng.choice(sample_size, self.batch_size, False)
@@ -39,8 +40,11 @@ class MiniBatchGradientDescent:
                 X[indices],
                 self.w,
                 y[indices]
-            ) + self.regularization_weight * self.regularization(self.w)
-            if abs(loss - prev_loss) / prev_loss < 1e-5:
+            )
+            regularization_loss, regularization_gradient = self.regularization(self.w)
+            loss += regularization_loss
+            gradient += regularization_gradient
+            if abs(loss - prev_loss) / prev_loss < 1e-5:  # TODO: fix magic number
                 return
             prev_loss = loss
 

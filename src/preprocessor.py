@@ -1,26 +1,12 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from abc import ABC
 from math import ceil
 from typing import List, Tuple, Union
-from sklearn.cluster import DBSCAN
 
 
 class Preprocessor(ABC):
     def __call__(self, x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         raise NotImplementedError
-
-    def export_figure(self, x: np.ndarray, y: np.ndarray):
-        new_x, new_y = self(x, y)
-        plt.figure()
-        plt.title(self.__class__.__name__)
-        plt.scatter(x, y, s=10, c="gray", label="Original Samples")
-        plt.scatter(new_x, new_y, s=5, c="red", label="Transformed Samples")
-        plt.legend()
-        plt.xlabel("x")
-        plt.ylabel("y")
-        plt.savefig(self.__class__.__name__)
-        plt.close()
 
 
 class NullPreprocessor(Preprocessor):
@@ -84,19 +70,3 @@ class MeanKernelPreprocessor(KernelPreprocessor):
             sum_x += x
             sum_y += y
         return sum_x / len(samples), sum_y / len(samples)
-
-
-class ClusteringPreprocessor(Preprocessor):
-    def __init__(self, mode, eps, min_samples):
-        self.mode = mode
-        self.eps = eps
-        self.min_samples = min_samples
-
-    def __call__(self, x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        if self.mode == "DBSCAN":
-            X = np.c_[x, y]
-            clustering = DBSCAN(eps=self.eps, min_samples=self.min_samples).fit(X)
-            index = np.where(clustering.labels_ != -1)
-            new_x = np.delete(x, index)
-            new_y = np.delete(y, index)
-            return np.array(new_x), np.array(new_y)
