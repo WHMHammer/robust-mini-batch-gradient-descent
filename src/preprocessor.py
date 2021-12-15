@@ -9,11 +9,6 @@ class Preprocessor(ABC):
         raise NotImplementedError
 
 
-class NullPreprocessor(Preprocessor):
-    def __call__(self, x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        return x, y
-
-
 class KernelPreprocessor(Preprocessor):
     def __init__(self, kernel_size: Union[float, Tuple[float, float]], strides: Union[float, Tuple[float, float]], threshold: float):
         # The kernel preprocessor is inspired by the kernels in neural networks (NN)

@@ -21,20 +21,16 @@ def power_expand(x: np.ndarray, power: int) -> np.ndarray:
 class PolynomialRegressor:
     def __init__(
         self,
-        preprocessor: Preprocessor,
-        power: int,
+        fitted_power: int,
         regularization: Regularization,
-        regularization_weight: float,
         loss: Loss,
         learning_rate: float,
         batch_size: int,
         max_iter: int
     ):
-        self.preprocessor: Preprocessor = preprocessor
-        self.power: int = power
+        self.fitted_power: int = fitted_power
         self.model: MiniBatchGradientDescent = MiniBatchGradientDescent(
             regularization,
-            regularization_weight,
             loss,
             learning_rate,
             batch_size,
@@ -42,11 +38,10 @@ class PolynomialRegressor:
         )
 
     def fit(self, x: np.ndarray, y: np.ndarray):
-        x, y = self.preprocessor(x, y)
-        self.model.fit(power_expand(x, self.power), y)
+        self.model.fit(power_expand(x, self.fitted_power), y)
 
     def predict(self, x: np.ndarray) -> np.ndarray:
-        return self.model.predict(power_expand(x, self.power))
+        return self.model.predict(power_expand(x, self.fitted_power))
 
 
 def generate_random_weights(power: int, w_low: float, w_high: float) -> np.ndarray:
@@ -56,14 +51,12 @@ def generate_random_weights(power: int, w_low: float, w_high: float) -> np.ndarr
 
 def generate_random_samples(
     w: np.ndarray,
-    x_low: float,
-    x_high: float,
     noise_level: float,
     sample_size: int
 ):
     # return x and y, respectively
     rng = np.random.default_rng()
-    x = rng.uniform(x_low, x_high, sample_size)
+    x = rng.uniform(-1, 1, sample_size)
     y = np.c_[np.ones(sample_size), power_expand(x, w.shape[0] - 1)].dot(w)
     y += rng.normal(0, stdev(y) * noise_level, sample_size)
     return x, y
