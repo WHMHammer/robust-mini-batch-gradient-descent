@@ -32,6 +32,10 @@ python3 -m tests
 
 For all the tests, we were fitting on 9-degree polynomials (with 10 mutually independent weights, including the bias term) with noise ~ 𝒩(0, Var(y)) and ε = 0.49.
 
-| Test Name | Naive Training | Naive Testing | ε-trimmed Huber Loss Training | ε-trimmed Huber Loss Testing | Mean-kernel Preprocessor Training | Mean-kernel Preprocessor Testing |
-| - | - | - | - | - | - | - |
-| Random Contamination | ![](test_results/random_contamination/naive/training.png) | ![](test_results/random_contamination/naive/testing.png) | ![](test_results/random_contamination/epsilon_trimmed_huber_loss/training.png) | ![](test_results/random_contamination/epsilon_trimmed_huber_loss/testing.png) | ![](test_results/random_contamination/mean_kernel_preprocessor/training.png) | ![](test_results/random_contamination/mean_kernel_preprocessor/testing.png) |
+<div style="overflow-x: scroll" markdown="block">
+
+| Test Name | Naive Training | Naive Testing | ε-trimmed Huber Loss Training | ε-trimmed Huber Loss Testing | Mean-kernel Preprocessor Training | Mean-kernel Preprocessor Testing | ε-trimmed Huber Loss with Mean-kernel Preprocessor Training | ε-trimmed Huber Loss with Mean-kernel Preprocessor Testing |
+| - | - | - | - | - | - | - | - | - |
+| Random Contamination | ![](test_results/random_contamination/naive/training.png) | ![](test_results/random_contamination/naive/testing.png) | ![](test_results/random_contamination/epsilon_trimmed_huber_loss/training.png) | ![](test_results/random_contamination/epsilon_trimmed_huber_loss/testing.png) | ![](test_results/random_contamination/mean_kernel_preprocessor/training.png) | ![](test_results/random_contamination/mean_kernel_preprocessor/testing.png) | ![](test_results/random_contamination/epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor/training.png) | ![](test_results/random_contamination/epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor/testing.png) |
+
+</div>

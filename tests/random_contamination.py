@@ -46,7 +46,7 @@ markdown_str += export_figures(
     x_testing,
     y_testing,
     predicted_y_testing,
-    "Random Contamination (naive)",
+    "Random Contamination (Naive)",
     join("random_contamination", "naive")
 )
 # naive model test end
@@ -74,12 +74,46 @@ markdown_str += export_figures(
     x_testing,
     y_testing,
     predicted_y_testing,
-    "Random Contamination (ε-trimmed huber loss)",
+    "Random Contamination (ε-trimmed Huber Loss)",
     join("random_contamination", "epsilon_trimmed_huber_loss")
 )
 # epsilon-trimmed huber loss test end
 
 # mean-kernel preprocessor test begin
+preprocessor = MeanKernelPreprocessor(
+    (0.1, 5),
+    (0.02, 1),
+    0.01
+)
+regressor = PolynomialRegressor(
+    power,
+    NullRegularization(),
+    EpsilonTrimmedHuberLoss(epsilon, 20),
+    0.01,
+    100,
+    100000
+)
+transformed_x, transformed_y = preprocessor(x_training, y_training)
+regressor.fit(transformed_x, transformed_y)
+
+predicted_y_training = regressor.predict(x_training)
+predicted_y_testing = regressor.predict(x_testing)
+markdown_str += export_figures(
+    x_training,
+    y_training,
+    contamination_indices,
+    transformed_x,
+    transformed_y,
+    predicted_y_training,
+    x_testing,
+    y_testing,
+    predicted_y_testing,
+    "Random Contamination (Mean-kernel Preprocessor)",
+    join("random_contamination", "mean_kernel_preprocessor")
+)
+# mean-kernel preprocessor test end
+
+# epsilon-trimmed huber loss with mean-kernel preprocessor test begin
 preprocessor = MeanKernelPreprocessor(
     (0.1, 5),
     (0.02, 1),
@@ -108,9 +142,10 @@ markdown_str += export_figures(
     x_testing,
     y_testing,
     predicted_y_testing,
-    "Random Contamination (mean-kernel preprocessor)",
-    join("random_contamination", "mean_kernel_preprocessor")
+    "Random Contamination (ε-trimmed Huber Loss with Mean-kernel Preprocessor)",
+    join("random_contamination",
+         "epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor")
 )
-# mean-kernel preprocessor test end
+# epsilon-trimmed huber loss with mean-kernel preprocessor test end
 
 # print(markdown_str)
