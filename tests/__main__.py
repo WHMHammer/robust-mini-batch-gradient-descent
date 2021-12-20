@@ -1,1 +1,1 @@
-from .random_contamination import *
+import tests.random_contamination
