@@ -24,7 +24,6 @@ x_testing, y_testing = generate_random_samples(w, 0, 1000)
 markdown_str = "| Random Contamination |"
 
 # naive model test begin
-preprocessor = None
 regressor = PolynomialRegressor(
     power,
     NullRegularization(),
@@ -33,14 +32,7 @@ regressor = PolynomialRegressor(
     100,
     100000
 )
-
-if preprocessor is None:
-    transformed_x = None
-    transformed_y = None
-    regressor.fit(x_training, y_training)
-else:
-    transformed_x, transformed_y = preprocessor(x_training, y_training)
-    regressor.fit(transformed_x, transformed_y)
+regressor.fit(x_training, y_training)
 
 predicted_y_training = regressor.predict(x_training)
 predicted_y_testing = regressor.predict(x_testing)
@@ -48,8 +40,8 @@ markdown_str += export_figures(
     x_training,
     y_training,
     contamination_indices,
-    transformed_x,
-    transformed_y,
+    None,
+    None,
     predicted_y_training,
     x_testing,
     y_testing,
@@ -59,7 +51,7 @@ markdown_str += export_figures(
 )
 # naive model test end
 
-preprocessor = None
+# epsilon-trimmed huber loss test begin
 regressor = PolynomialRegressor(
     power,
     NullRegularization(),
@@ -68,14 +60,41 @@ regressor = PolynomialRegressor(
     100,
     100000
 )
+regressor.fit(x_training, y_training)
 
-if preprocessor is None:
-    transformed_x = None
-    transformed_y = None
-    regressor.fit(x_training, y_training)
-else:
-    transformed_x, transformed_y = preprocessor(x_training, y_training)
-    regressor.fit(transformed_x, transformed_y)
+predicted_y_training = regressor.predict(x_training)
+predicted_y_testing = regressor.predict(x_testing)
+markdown_str += export_figures(
+    x_training,
+    y_training,
+    contamination_indices,
+    None,
+    None,
+    predicted_y_training,
+    x_testing,
+    y_testing,
+    predicted_y_testing,
+    "Random Contamination (ε-trimmed huber loss)",
+    join("random_contamination", "epsilon_trimmed_huber_loss")
+)
+# epsilon-trimmed huber loss test end
+
+# mean-kernel preprocessor test begin
+preprocessor = MeanKernelPreprocessor(
+    (0.1, 5),
+    (0.02, 1),
+    0.01
+)
+regressor = PolynomialRegressor(
+    power,
+    NullRegularization(),
+    EpsilonTrimmedSquaredLoss(0),
+    0.01,
+    100,
+    100000
+)
+transformed_x, transformed_y = preprocessor(x_training, y_training)
+regressor.fit(transformed_x, transformed_y)
 
 predicted_y_training = regressor.predict(x_training)
 predicted_y_testing = regressor.predict(x_testing)
@@ -89,8 +108,9 @@ markdown_str += export_figures(
     x_testing,
     y_testing,
     predicted_y_testing,
-    "Random Contamination (ε-trimmed huber loss)",
-    join("random_contamination", "epsilon_trimmed_huber_loss")
+    "Random Contamination (mean-kernel preprocessor)",
+    join("random_contamination", "mean_kernel_preprocessor")
 )
+# mean-kernel preprocessor test end
 
 # print(markdown_str)
