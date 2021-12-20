@@ -218,8 +218,8 @@ def test_mean_kernel_preprocessor(
     dirname: str
 ) -> str:
     preprocessor = MeanKernelPreprocessor(
-        (0.2, 2),
-        (0.02, 0.2),
+        (0.2, 4),
+        (0.1, 2),
         0.01
     )
     regressor = PolynomialRegressor(
@@ -227,7 +227,7 @@ def test_mean_kernel_preprocessor(
         NullRegularization(),
         EpsilonTrimmedSquaredLoss(0),
         0.01,
-        100,
+        10,
         100000
     )
     transformed_x, transformed_y = preprocessor(x_training, y_training)
@@ -261,8 +261,8 @@ def test_epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor(
     dirname: str
 ) -> str:
     preprocessor = MeanKernelPreprocessor(
-        (0.2, 2),
-        (0.02, 0.2),
+        (0.2, 4),
+        (0.1, 2),
         0.01
     )
     regressor = PolynomialRegressor(
@@ -270,7 +270,7 @@ def test_epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor(
         NullRegularization(),
         EpsilonTrimmedHuberLoss(0.49, 10),
         0.01,
-        100,
+        10,
         100000
     )
     transformed_x, transformed_y = preprocessor(x_training, y_training)
