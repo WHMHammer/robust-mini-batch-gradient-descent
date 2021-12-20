@@ -94,3 +94,200 @@ def export_figures(
     markdown_str += f" ![]({filename}) |"
 
     return markdown_str
+
+
+def test_naive(
+    power: int,
+    x_training: np.ndarray,
+    y_training: np.ndarray,
+    contamination_indices: np.ndarray,
+    x_testing: np.ndarray,
+    y_testing: np.ndarray,
+    test_name: str,
+    dirname: str
+) -> str:
+    regressor = PolynomialRegressor(
+        power,
+        NullRegularization(),
+        EpsilonTrimmedSquaredLoss(0),
+        0.01,
+        100,
+        100000
+    )
+    regressor.fit(x_training, y_training)
+
+    predicted_y_training = regressor.predict(x_training)
+    predicted_y_testing = regressor.predict(x_testing)
+    return export_figures(
+        x_training,
+        y_training,
+        contamination_indices,
+        None,
+        None,
+        predicted_y_training,
+        x_testing,
+        y_testing,
+        predicted_y_testing,
+        f"{test_name} (Naive)",
+        join(dirname, "naive")
+    )
+
+
+def test_huber_loss(
+    power: int,
+    x_training: np.ndarray,
+    y_training: np.ndarray,
+    contamination_indices: np.ndarray,
+    x_testing: np.ndarray,
+    y_testing: np.ndarray,
+    test_name: str,
+    dirname: str
+) -> str:
+    regressor = PolynomialRegressor(
+        power,
+        NullRegularization(),
+        EpsilonTrimmedHuberLoss(0, 10),
+        0.01,
+        100,
+        100000
+    )
+    regressor.fit(x_training, y_training)
+
+    predicted_y_training = regressor.predict(x_training)
+    predicted_y_testing = regressor.predict(x_testing)
+    return export_figures(
+        x_training,
+        y_training,
+        contamination_indices,
+        None,
+        None,
+        predicted_y_training,
+        x_testing,
+        y_testing,
+        predicted_y_testing,
+        f"{test_name} (Huber Loss)",
+        join(dirname, "huber_loss")
+    )
+
+
+def test_epsilon_trimmed_huber_loss(
+    power: int,
+    x_training: np.ndarray,
+    y_training: np.ndarray,
+    contamination_indices: np.ndarray,
+    x_testing: np.ndarray,
+    y_testing: np.ndarray,
+    test_name: str,
+    dirname: str
+) -> str:
+    regressor = PolynomialRegressor(
+        power,
+        NullRegularization(),
+        EpsilonTrimmedHuberLoss(0.49, 10),
+        0.01,
+        100,
+        100000
+    )
+    regressor.fit(x_training, y_training)
+
+    predicted_y_training = regressor.predict(x_training)
+    predicted_y_testing = regressor.predict(x_testing)
+    return export_figures(
+        x_training,
+        y_training,
+        contamination_indices,
+        None,
+        None,
+        predicted_y_training,
+        x_testing,
+        y_testing,
+        predicted_y_testing,
+        f"{test_name} (ε-trimmed Huber Loss)",
+        join(dirname, "epsilon_trimmed_huber_loss")
+    )
+
+
+def test_mean_kernel_preprocessor(
+    power: int,
+    x_training: np.ndarray,
+    y_training: np.ndarray,
+    contamination_indices: np.ndarray,
+    x_testing: np.ndarray,
+    y_testing: np.ndarray,
+    test_name: str,
+    dirname: str
+) -> str:
+    preprocessor = MeanKernelPreprocessor(
+        (0.2, 2),
+        (0.02, 0.2),
+        0.01
+    )
+    regressor = PolynomialRegressor(
+        power,
+        NullRegularization(),
+        EpsilonTrimmedSquaredLoss(0),
+        0.01,
+        100,
+        100000
+    )
+    transformed_x, transformed_y = preprocessor(x_training, y_training)
+    regressor.fit(transformed_x, transformed_y)
+
+    predicted_y_training = regressor.predict(x_training)
+    predicted_y_testing = regressor.predict(x_testing)
+    return export_figures(
+        x_training,
+        y_training,
+        contamination_indices,
+        transformed_x,
+        transformed_y,
+        predicted_y_training,
+        x_testing,
+        y_testing,
+        predicted_y_testing,
+        f"{test_name} (Mean-kernel Preprocessor)",
+        join(dirname, "mean_kernel_preprocessor")
+    )
+
+
+def test_epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor(
+    power: int,
+    x_training: np.ndarray,
+    y_training: np.ndarray,
+    contamination_indices: np.ndarray,
+    x_testing: np.ndarray,
+    y_testing: np.ndarray,
+    test_name: str,
+    dirname: str
+) -> str:
+    preprocessor = MeanKernelPreprocessor(
+        (0.2, 2),
+        (0.02, 0.2),
+        0.01
+    )
+    regressor = PolynomialRegressor(
+        power,
+        NullRegularization(),
+        EpsilonTrimmedHuberLoss(0.49, 10),
+        0.01,
+        100,
+        100000
+    )
+    transformed_x, transformed_y = preprocessor(x_training, y_training)
+    regressor.fit(transformed_x, transformed_y)
+
+    predicted_y_training = regressor.predict(x_training)
+    predicted_y_testing = regressor.predict(x_testing)
+    return export_figures(
+        x_training,
+        y_training,
+        contamination_indices,
+        transformed_x,
+        transformed_y,
+        predicted_y_training,
+        x_testing,
+        y_testing,
+        predicted_y_testing,
+        f"{test_name} (ε-trimmed Huber Loss with Mean-kernel Preprocessor)",
+        join(dirname, "epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor")
+    )

@@ -21,159 +21,57 @@ y_training[contamination_indices] = y_contamination
 
 x_testing, y_testing = generate_random_samples(w, 0, 1000)
 
+test_name = "Random Contamination"
+dirname = "random_contamination"
 markdown_str = "| Random Contamination |"
-
-# naive model test begin
-regressor = PolynomialRegressor(
+markdown_str += test_naive(
     power,
-    NullRegularization(),
-    EpsilonTrimmedSquaredLoss(0),
-    0.01,
-    100,
-    100000
-)
-regressor.fit(x_training, y_training)
-
-predicted_y_training = regressor.predict(x_training)
-predicted_y_testing = regressor.predict(x_testing)
-markdown_str += export_figures(
     x_training,
     y_training,
     contamination_indices,
-    None,
-    None,
-    predicted_y_training,
     x_testing,
     y_testing,
-    predicted_y_testing,
-    "Random Contamination (Naive)",
-    join("random_contamination", "naive")
+    test_name,
+    dirname
 )
-# naive model test end
-
-# huber loss test begin
-regressor = PolynomialRegressor(
+markdown_str += test_huber_loss(
     power,
-    NullRegularization(),
-    EpsilonTrimmedHuberLoss(0, 10),
-    0.01,
-    100,
-    100000
-)
-regressor.fit(x_training, y_training)
-
-predicted_y_training = regressor.predict(x_training)
-predicted_y_testing = regressor.predict(x_testing)
-markdown_str += export_figures(
     x_training,
     y_training,
     contamination_indices,
-    None,
-    None,
-    predicted_y_training,
     x_testing,
     y_testing,
-    predicted_y_testing,
-    "Random Contamination (Huber Loss)",
-    join("random_contamination", "huber_loss")
+    test_name,
+    dirname
 )
-# huber loss test end
-
-# epsilon-trimmed huber loss test begin
-regressor = PolynomialRegressor(
+markdown_str += test_epsilon_trimmed_huber_loss(
     power,
-    NullRegularization(),
-    EpsilonTrimmedHuberLoss(epsilon, 10),
-    0.01,
-    100,
-    100000
-)
-regressor.fit(x_training, y_training)
-
-predicted_y_training = regressor.predict(x_training)
-predicted_y_testing = regressor.predict(x_testing)
-markdown_str += export_figures(
     x_training,
     y_training,
     contamination_indices,
-    None,
-    None,
-    predicted_y_training,
     x_testing,
     y_testing,
-    predicted_y_testing,
-    "Random Contamination (ε-trimmed Huber Loss)",
-    join("random_contamination", "epsilon_trimmed_huber_loss")
+    test_name,
+    dirname
 )
-# epsilon-trimmed huber loss test end
-
-# mean-kernel preprocessor test begin
-preprocessor = MeanKernelPreprocessor(
-    (0.2, 2),
-    (0.02, 0.2),
-    0.01
-)
-regressor = PolynomialRegressor(
+markdown_str += test_mean_kernel_preprocessor(
     power,
-    NullRegularization(),
-    EpsilonTrimmedSquaredLoss(0),
-    0.01,
-    100,
-    100000
-)
-transformed_x, transformed_y = preprocessor(x_training, y_training)
-regressor.fit(transformed_x, transformed_y)
-
-predicted_y_training = regressor.predict(x_training)
-predicted_y_testing = regressor.predict(x_testing)
-markdown_str += export_figures(
     x_training,
     y_training,
     contamination_indices,
-    transformed_x,
-    transformed_y,
-    predicted_y_training,
     x_testing,
     y_testing,
-    predicted_y_testing,
-    "Random Contamination (Mean-kernel Preprocessor)",
-    join("random_contamination", "mean_kernel_preprocessor")
+    test_name,
+    dirname
 )
-# mean-kernel preprocessor test end
-
-# epsilon-trimmed huber loss with mean-kernel preprocessor test begin
-preprocessor = MeanKernelPreprocessor(
-    (0.2, 2),
-    (0.02, 0.2),
-    0.01
-)
-regressor = PolynomialRegressor(
+markdown_str += test_epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor(
     power,
-    NullRegularization(),
-    EpsilonTrimmedHuberLoss(epsilon, 10),
-    0.01,
-    100,
-    100000
-)
-transformed_x, transformed_y = preprocessor(x_training, y_training)
-regressor.fit(transformed_x, transformed_y)
-
-predicted_y_training = regressor.predict(x_training)
-predicted_y_testing = regressor.predict(x_testing)
-markdown_str += export_figures(
     x_training,
     y_training,
     contamination_indices,
-    transformed_x,
-    transformed_y,
-    predicted_y_training,
     x_testing,
     y_testing,
-    predicted_y_testing,
-    "Random Contamination (ε-trimmed Huber Loss with Mean-kernel Preprocessor)",
-    join("random_contamination",
-         "epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor")
+    test_name,
+    dirname
 )
-# epsilon-trimmed huber loss with mean-kernel preprocessor test end
-
 # print(markdown_str)
