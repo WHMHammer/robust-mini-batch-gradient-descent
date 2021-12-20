@@ -11,16 +11,12 @@ training_size = 1000
 x_training, y_training = generate_random_samples(w, 1, training_size)
 contamination_size = ceil(epsilon * training_size)
 contamination_indices = rng.choice(training_size, contamination_size, False)
-x_contamination = rng.uniform(-1, 1, contamination_size)
-y_contamination = rng.uniform(
-    y_training.min(), y_training.max(), contamination_size)
-x_training[contamination_indices] = x_contamination
-y_training[contamination_indices] = y_contamination
+y_training[contamination_indices] += y_training.max() - y_training.min()
 
 x_testing, y_testing = generate_random_samples(w, 0, 1000)
 
-test_name = "Random Contamination"
-dirname = "random_contamination"
+test_name = "Parallel Line Contamination"
+dirname = "parallel_line_contamination"
 markdown_str = f"| {test_name} |"
 markdown_str += test_naive(
     power,
