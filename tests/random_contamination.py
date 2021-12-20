@@ -51,11 +51,39 @@ markdown_str += export_figures(
 )
 # naive model test end
 
+# huber loss test begin
+regressor = PolynomialRegressor(
+    power,
+    NullRegularization(),
+    EpsilonTrimmedHuberLoss(0, 10),
+    0.01,
+    100,
+    100000
+)
+regressor.fit(x_training, y_training)
+
+predicted_y_training = regressor.predict(x_training)
+predicted_y_testing = regressor.predict(x_testing)
+markdown_str += export_figures(
+    x_training,
+    y_training,
+    contamination_indices,
+    None,
+    None,
+    predicted_y_training,
+    x_testing,
+    y_testing,
+    predicted_y_testing,
+    "Random Contamination (Huber Loss)",
+    join("random_contamination", "huber_loss")
+)
+# huber loss test end
+
 # epsilon-trimmed huber loss test begin
 regressor = PolynomialRegressor(
     power,
     NullRegularization(),
-    EpsilonTrimmedHuberLoss(epsilon, 20),
+    EpsilonTrimmedHuberLoss(epsilon, 10),
     0.01,
     100,
     100000
@@ -81,14 +109,14 @@ markdown_str += export_figures(
 
 # mean-kernel preprocessor test begin
 preprocessor = MeanKernelPreprocessor(
-    (0.1, 5),
-    (0.02, 1),
+    (0.2, 2),
+    (0.02, 0.2),
     0.01
 )
 regressor = PolynomialRegressor(
     power,
     NullRegularization(),
-    EpsilonTrimmedHuberLoss(epsilon, 20),
+    EpsilonTrimmedSquaredLoss(0),
     0.01,
     100,
     100000
@@ -115,14 +143,14 @@ markdown_str += export_figures(
 
 # epsilon-trimmed huber loss with mean-kernel preprocessor test begin
 preprocessor = MeanKernelPreprocessor(
-    (0.1, 5),
-    (0.02, 1),
+    (0.2, 2),
+    (0.02, 0.2),
     0.01
 )
 regressor = PolynomialRegressor(
     power,
     NullRegularization(),
-    EpsilonTrimmedSquaredLoss(0),
+    EpsilonTrimmedHuberLoss(epsilon, 10),
     0.01,
     100,
     100000
