@@ -1,5 +1,3 @@
-import numpy as np
-from math import ceil
 from tests.utils import *
 
 power = 9
@@ -16,57 +14,13 @@ y_training[contamination_indices] += y_training.max() - y_training.min()
 
 x_testing, y_testing = generate_random_samples(w, 0, 1000)
 
-test_name = "Segment Displacement Contamination"
-dirname = "segment_displacement_contamination"
-markdown_str = f"| {test_name} |"
-markdown_str += test_naive(
+test_all(
     power,
     x_training,
     y_training,
     contamination_indices,
     x_testing,
     y_testing,
-    test_name,
-    dirname
+    "Segment Displacement Contamination",
+    "segment_displacement_contamination"
 )
-markdown_str += test_huber_loss(
-    power,
-    x_training,
-    y_training,
-    contamination_indices,
-    x_testing,
-    y_testing,
-    test_name,
-    dirname
-)
-markdown_str += test_epsilon_trimmed_huber_loss(
-    power,
-    x_training,
-    y_training,
-    contamination_indices,
-    x_testing,
-    y_testing,
-    test_name,
-    dirname
-)
-markdown_str += test_mean_kernel_preprocessor(
-    power,
-    x_training,
-    y_training,
-    contamination_indices,
-    x_testing,
-    y_testing,
-    test_name,
-    dirname
-)
-markdown_str += test_epsilon_trimmed_huber_loss_with_mean_kernel_preprocessor(
-    power,
-    x_training,
-    y_training,
-    contamination_indices,
-    x_testing,
-    y_testing,
-    test_name,
-    dirname
-)
-print(markdown_str)

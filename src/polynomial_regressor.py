@@ -1,7 +1,5 @@
 import numpy as np
-from statistics import stdev
 
-from .preprocessor import Preprocessor
 from .regularization import Regularization
 from .loss import Loss
 from .mini_batch_gradient_descent import MiniBatchGradientDescent
@@ -58,5 +56,5 @@ def generate_random_samples(
     rng = np.random.default_rng()
     x = rng.uniform(-1, 1, sample_size)
     y = np.c_[np.ones(sample_size), power_expand(x, w.shape[0] - 1)].dot(w)
-    y += rng.normal(0, stdev(y) * noise_level, sample_size)
+    y += rng.normal(0, np.std(y) * noise_level, sample_size)
     return x, y

@@ -32,9 +32,11 @@ class KernelPreprocessor(Preprocessor):
         kernels = dict()
         for xi, yi in zip(x, y):
             ix_low = ceil((xi - x.min()) / self.strides[0])
-            ix_high = int((xi - (x.min() - self.kernel_size[0])) / self.strides[0])
+            ix_high = int(
+                (xi - (x.min() - self.kernel_size[0])) / self.strides[0])
             iy_low = ceil((yi - y.min()) / self.strides[1])
-            iy_high = int((yi - (y.min() - self.kernel_size[1])) / self.strides[1])
+            iy_high = int(
+                (yi - (y.min() - self.kernel_size[1])) / self.strides[1])
             for ix in range(ix_low, ix_high + 1):
                 for iy in range(iy_low, iy_high + 1):
                     try:

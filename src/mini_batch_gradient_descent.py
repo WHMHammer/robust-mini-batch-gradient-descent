@@ -30,7 +30,8 @@ class MiniBatchGradientDescent:
             self.w,
             y[indices]
         )
-        regularization_loss, regularization_gradient = self.regularization(self.w)
+        regularization_loss, regularization_gradient = self.regularization(
+            self.w)
         prev_loss += regularization_loss
         gradient += regularization_gradient
         for _ in range(self.max_iter):
@@ -41,7 +42,8 @@ class MiniBatchGradientDescent:
                 self.w,
                 y[indices]
             )
-            regularization_loss, regularization_gradient = self.regularization(self.w)
+            regularization_loss, regularization_gradient = self.regularization(
+                self.w)
             loss += regularization_loss
             gradient += regularization_gradient
             if abs(loss - prev_loss) / prev_loss < 1e-5:  # TODO: fix magic number

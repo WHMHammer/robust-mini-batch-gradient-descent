@@ -1,53 +1,82 @@
 import numpy as np
 from abc import ABC
 from math import ceil
-from typing import Tuple
+from scipy.stats import zscore
+from typing import Tuple, Union
 
 
 class Loss(ABC):
-    def __init__(self, epsilon: float):
-        self.epsilon: float = epsilon
-
     def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray) -> Tuple[float, np.ndarray]:
         # returns loss and gradient, respectively
         raise NotImplementedError
 
 
-class EpsilonTrimmedSquaredLoss(Loss):
-    def __init__(self, epsilon: float):
-        self.epsilon: float = epsilon
-
-    def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray) -> Tuple[float, np.ndarray]:
-        kept_size = ceil(X.shape[0] * (1 - self.epsilon))
-        residuals = X.dot(w) - y
+class SquaredLoss(Loss):
+    def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray, residuals: Union[np.ndarray, None] = None) -> Tuple[float, np.ndarray]:
+        if residuals is None:
+            residuals = X.dot(w) - y
         losses = np.square(residuals)
-        kept_indices = np.argsort(losses)[:kept_size]
         return (
-            losses[kept_indices].sum() / 2 / kept_size,
-            X[kept_indices].T.dot(residuals[kept_indices]) / kept_size
+            losses.sum() / 2 / X.shape[0],
+            X.T.dot(residuals) / X.shape[0]
         )
 
 
-class EpsilonTrimmedHuberLoss(Loss):
-    def __init__(self, epsilon: float, threshold: float):
-        self.epsilon: float = epsilon
-        self.threshold: float = threshold
+class HuberLoss(Loss):
+    def __init__(self, threshold: float):
+        self.threshold = threshold
 
-    def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray) -> Tuple[float, np.ndarray]:
-        kept_size = ceil(X.shape[0] * (1 - self.epsilon))
-        residuals = X.dot(w) - y
+    def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray, residuals: Union[np.ndarray, None] = None) -> Tuple[float, np.ndarray]:
+        if residuals is None:
+            residuals = X.dot(w) - y
         absolute_residuals = np.absolute(residuals)
-        kept_indices = np.argsort(absolute_residuals)[:kept_size]
-        filter = absolute_residuals[kept_indices] <= self.threshold
+        filter = absolute_residuals <= self.threshold
         return (
             np.where(
                 filter,
-                np.square(residuals[kept_indices]) / 2,
-                absolute_residuals[kept_indices] * self.threshold - self.threshold * self.threshold / 2
-            ).sum() / kept_size,
+                np.square(residuals) / 2,
+                absolute_residuals * self.threshold - self.threshold * self.threshold / 2
+            ).sum() / X.shape[0],
             np.where(
                 np.repeat(filter.reshape((-1, 1)), X.shape[1], 1),
-                (X[kept_indices].T * residuals[kept_indices]).T,
-                (X[kept_indices].T * np.sign(residuals[kept_indices])).T * self.threshold
-            ).sum(0) / kept_size
+                (X.T * residuals).T,
+                (X.T * np.sign(residuals)).T * self.threshold
+            ).sum(0) / X.shape[0]
         )
+
+
+class EpsilonTrimmedLoss(Loss):
+    def __init__(self, loss: Loss, epsilon: float):
+        self.loss = loss
+        self.epsilon = epsilon
+
+    def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray, residuals: Union[np.ndarray, None] = None) -> Tuple[float, np.ndarray]:
+        if residuals is None:
+            residuals = X.dot(w) - y
+        absolute_residuals = np.absolute(residuals)
+        kept_indices = np.argsort(absolute_residuals)[
+            :ceil(X.shape[0] * (1 - self.epsilon))]
+        return self.loss(X[kept_indices], w, y[kept_indices], residuals[kept_indices])
+
+
+class ZScoreTrimmedLoss(Loss):
+    # TODO: implement the zscore function myself
+    def __init__(self, loss: Loss):
+        self.loss = loss
+
+    def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray, residuals: Union[np.ndarray, None] = None) -> Tuple[float, np.ndarray]:
+        if residuals is None:
+            residuals = X.dot(w) - y
+        residuals_copy = np.copy(residuals)
+        kept_filter = np.full(X.shape[0], True)
+        half = int(X.shape[0] / 2)
+        z_scores_filter = np.absolute(zscore(residuals)) > 2
+        while np.count_nonzero(kept_filter) > half and np.any(z_scores_filter):
+            kept_filter[z_scores_filter] = False
+            residuals[z_scores_filter] = np.nan
+            z_scores_filter = np.absolute(zscore(residuals)) > 2
+        if np.count_nonzero(kept_filter) <= half:
+            return self.loss(X, w, y, residuals_copy)
+        return self.loss(X[kept_filter], w, y[kept_filter], residuals[kept_filter])
+
+# TODO: implement quicker/simpler normality tests (e.g. Q-Q based, mean-median relationship-based, etc.)
