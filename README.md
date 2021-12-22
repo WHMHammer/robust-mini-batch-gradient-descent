@@ -32,7 +32,7 @@ python3 -m tests
 
 ## Test Results
 
-In all the following tests, models were fitted on 9-degree polynomials (with 10 mutually independent weights, including the bias term) with noise ~ 𝒩(0, Var(y)) and ε = 0.49.
+In all the following tests, models were fitted with 5 degrees on 9-degree polynomials with noise ~ 𝒩(0, Var(y)) and ε = 0.49.
 
 It seems that the model with ε-then-Z-score-trimmed Huber Loss without preprocessing is the best one.
 
