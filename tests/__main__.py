@@ -1,3 +1,4 @@
+from numpy import random
 import tests.random_contamination
 import tests.parallel_line_contamination
 import tests.local_dense_contamination

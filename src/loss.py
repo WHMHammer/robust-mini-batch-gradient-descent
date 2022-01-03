@@ -1,7 +1,6 @@
 import numpy as np
 from abc import ABC
 from math import ceil
-from scipy.stats import zscore
 from typing import Tuple, Union
 
 
@@ -59,10 +58,14 @@ class EpsilonTrimmedLoss(Loss):
         return self.loss(X[kept_indices], w, y[kept_indices], residuals[kept_indices])
 
 
+def absolute_z_score(x: np.ndarray) -> np.ndarray:
+    return np.absolute((x - np.mean(x)) / np.std(x))
+
+
 class ZScoreTrimmedLoss(Loss):
-    # TODO: implement the zscore function myself
-    def __init__(self, loss: Loss):
+    def __init__(self, loss: Loss, threshold: float):
         self.loss = loss
+        self.threshold = threshold
 
     def __call__(self, X: np.ndarray, w: np.ndarray, y: np.ndarray, residuals: Union[np.ndarray, None] = None) -> Tuple[float, np.ndarray]:
         if residuals is None:
@@ -70,13 +73,11 @@ class ZScoreTrimmedLoss(Loss):
         residuals_copy = np.copy(residuals)
         kept_filter = np.full(X.shape[0], True)
         half = int(X.shape[0] / 2)
-        z_scores_filter = np.absolute(zscore(residuals)) > 2
+        z_scores_filter = absolute_z_score(residuals) > self.threshold
         while np.count_nonzero(kept_filter) > half and np.any(z_scores_filter):
             kept_filter[z_scores_filter] = False
             residuals[z_scores_filter] = np.nan
-            z_scores_filter = np.absolute(zscore(residuals)) > 2
+            z_scores_filter = absolute_z_score(residuals) > self.threshold
         if np.count_nonzero(kept_filter) <= half:
             return self.loss(X, w, y, residuals_copy)
         return self.loss(X[kept_filter], w, y[kept_filter], residuals[kept_filter])
-
-# TODO: implement quicker/simpler normality tests (e.g. Q-Q based, mean-median relationship-based, etc.)

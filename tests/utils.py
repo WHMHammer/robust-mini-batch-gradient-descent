@@ -184,7 +184,7 @@ def test_z_score_trimmed_huber_loss(
     regressor = PolynomialRegressor(
         power,
         NullRegularization(),
-        ZScoreTrimmedLoss(HuberLoss(10)),
+        ZScoreTrimmedLoss(HuberLoss(10), 2),
         0.01,
         100,
         100000
@@ -221,7 +221,7 @@ def test_epsilon_then_z_score_trimmed_huber_loss(
     regressor = PolynomialRegressor(
         power,
         NullRegularization(),
-        EpsilonTrimmedLoss(ZScoreTrimmedLoss(HuberLoss(10)), 0.49),
+        EpsilonTrimmedLoss(ZScoreTrimmedLoss(HuberLoss(10), 2), 0.49),
         0.01,
         100,
         100000
@@ -349,7 +349,7 @@ def test_z_score_trimmed_huber_loss_with_mean_kernel_preprocessor(
     regressor = PolynomialRegressor(
         power,
         NullRegularization(),
-        ZScoreTrimmedLoss(HuberLoss(10)),
+        ZScoreTrimmedLoss(HuberLoss(10), 2),
         0.01,
         10,
         100000
@@ -392,9 +392,9 @@ def test_epsilon_then_z_score_trimmed_huber_loss_with_mean_kernel_preprocessor(
     regressor = PolynomialRegressor(
         power,
         NullRegularization(),
-        EpsilonTrimmedLoss(ZScoreTrimmedLoss(HuberLoss(10)), 0.49),
+        EpsilonTrimmedLoss(ZScoreTrimmedLoss(HuberLoss(10), 2), 0.49),
         0.01,
-        100,
+        10,
         100000
     )
     transformed_x, transformed_y = preprocessor(x_training, y_training)
@@ -448,4 +448,4 @@ def test_all(
             test_name,
             dirname
         )
-    print(markdown_str)
+    #print(markdown_str)
